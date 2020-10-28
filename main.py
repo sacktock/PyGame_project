@@ -32,22 +32,29 @@ class Scene():
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,0],
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
+            [0,0,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,0,0],
+            [0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0],
+            [0,0,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0]]
 
         self.i_grass = pygame.image.load('assets/terrain/Grass_Tile.png')
+        self.i_cloud = pygame.image.load('assets/terrain/Air_Tile.png')
+        self.i_sand = pygame.image.load('assets/terrain/Sandlands_Tile.png')
+        self.i_sand_2 = pygame.image.load('assets/terrain/Sandlands_Tile_2.png')
+        self.i_snow = pygame.image.load('assets/terrain/Snowlands_Tile.png')
+        self.i_snow_2 = pygame.image.load('assets/terrain/Snowlands_Tile_2.png')
+        self.i_snow_3 = pygame.image.load('assets/terrain/Snowlands_Tile_3.png')
+        self.i_underwater = pygame.image.load('assets/terrain/Underwaterlands_Tile.png')
         self.WIDTH = 24
         self.HEIGHT = 24
         self.MARGIN = 0
@@ -55,13 +62,19 @@ class Scene():
     def draw(self):
         for row in range(0, len(self.grid)):
             for column in range(0, len(self.grid[row])):
-                if self.grid[row][column] != 0:
-                    color = GREEN
-                    screen.blit(self.i_grass,
+                if self.grid[row][column] == 1:
+                    screen.blit(self.i_snow,
                              [(self.MARGIN + self.WIDTH) * column + self.MARGIN,
                               (self.MARGIN + self.HEIGHT) * row + self.MARGIN,
                               self.WIDTH,
                               self.HEIGHT])
+                if self.grid[row][column] == 2:
+                    screen.blit(self.i_cloud,
+                             [(self.MARGIN + self.WIDTH) * column + self.MARGIN,
+                              (self.MARGIN + self.HEIGHT) * row + self.MARGIN,
+                              self.WIDTH,
+                              self.HEIGHT])
+                
                 
 class Player(pygame.sprite.Sprite):
 
@@ -280,7 +293,7 @@ class Player(pygame.sprite.Sprite):
         
         try:
             # Set the floor for the current game scene
-            if scene.grid[self.rect.bottom // 24][self.rect.right // 24] == 1 or scene.grid[self.rect.bottom // 24][self.rect.left // 24] == 1:
+            if scene.grid[self.rect.bottom // 24][self.rect.right // 24] in [1, 2] or scene.grid[self.rect.bottom // 24][self.rect.left // 24] in [1, 2]:
                 self.rect.bottom = ((self.rect.bottom // 24))*24 - 1
                 self.isjump = False
                 self.isdoublejump = False
@@ -289,10 +302,10 @@ class Player(pygame.sprite.Sprite):
                 self.isjump = True
 
             # set the walls for rhe current game scene
-            if scene.grid[self.rect.bottom // 24][self.rect.right // 24] == 2 or scene.grid[self.rect.top // 24][self.rect.right // 24] == 2:
+            if scene.grid[self.rect.bottom // 24][self.rect.right // 24] == 11 or scene.grid[self.rect.top // 24][self.rect.right // 24] == 11:
                 self.rect.right = ((self.rect.right // 24))*24 - 1
 
-            if scene.grid[self.rect.bottom // 24][self.rect.left // 24] == 3 or scene.grid[self.rect.top // 24][self.rect.left // 24] == 3:
+            if scene.grid[self.rect.bottom // 24][self.rect.left // 24] == 21 or scene.grid[self.rect.top // 24][self.rect.left // 24] == 21:
                 self.rect.left = ((self.rect.left // 24))*24 + 24
         except IndexError:
             # if you fall off the map you die
