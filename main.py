@@ -346,7 +346,6 @@ class CPU_Player(pygame.sprite.Sprite):
             self.isjump = False
             self.speedy = 0
             
-    
 class Player(pygame.sprite.Sprite):
 
     def __init__(self):
@@ -369,19 +368,6 @@ class Player(pygame.sprite.Sprite):
         self.a_frames = 0 # animation frames
         self.j_frames = 0 # jumping frames
 
-        self.s_idle = SpriteStrip('assets/vigilante/Vigilante_Idle_strip4.png').get_strip(16, 32, 64, 32)
-        self.s_walking = SpriteStrip('assets/vigilante/Vigilante_Walk_strip4.png').get_strip(16, 32, 64, 32)
-        self.s_running = SpriteStrip('assets/vigilante/Vigilante_Run_strip4.png').get_strip(16, 32, 64, 32)
-        self.s_aerial = SpriteStrip('assets/vigilante/Vigilante_Jump_Kick_strip4.png').get_strip(24, 32, 96, 32)
-        self.s_headbutt = SpriteStrip('assets/vigilante/Vigilante_Head_Butt_strip2.png').get_strip(24, 32, 48, 32)
-        self.i_crouch = pygame.image.load('assets/vigilante/Vigilante_Get_Up.png').convert_alpha()
-        self.i_punch_1 = pygame.image.load('assets/vigilante/Vigilante_Punch_1.png').convert_alpha()
-        self.i_punch_2 = pygame.image.load('assets/vigilante/Vigilante_Punch_2.png').convert_alpha()
-        self.i_kick_1 = pygame.image.load('assets/vigilante/Vigilante_Kick_1.png').convert_alpha()
-        self.i_kick_2 = pygame.image.load('assets/vigilante/Vigilante_Kick_2.png').convert_alpha()
-        self.i_hurt = pygame.image.load('assets/vigilante/Vigilante_Hurt.png').convert_alpha()
-        self.i_knockout = pygame.image.load('assets/vigilante/Vigilante_Knock_out.png').convert_alpha()
-        self.i_death = pygame.image.load('assets/vigilante/Vigilante_Down_Death.png').convert_alpha()
 
     def reset(self):
         self.rect.centerx = WIDTH // 4 + 5   #center of rectangle
@@ -397,12 +383,11 @@ class Player(pygame.sprite.Sprite):
         self.j_frames = 0 # jumping frames
         self.i_frames = 0 # idle frames
 
-        
     def update_state(self, new):
         if self.state not in ['P', 'K', 'JK', 'CP', 'D', 'H', 'KO']:
             self.state = new
             self.a_frames = 0
-
+            
     def handle_controls(self):
         keystate = pygame.key.get_pressed()
         # manage player direction
@@ -454,8 +439,7 @@ class Player(pygame.sprite.Sprite):
                 elif mousestate == (1,0,0):
                     self.update_state('P')
                     self.a_frames = 0
-
-        
+                    
     def update(self):
         pos_x = self.rect.x
         pos_y = self.rect.y
@@ -504,7 +488,7 @@ class Player(pygame.sprite.Sprite):
             elif self.a_frames < 1080:
                 frame = self.i_punch_2
                 self.image = frame
-            if self.a_frames < 1620:
+            elif self.a_frames < 1620:
                 frame = self.s_headbutt[0]
                 self.image = frame
             elif self.a_frames < 2160:
@@ -528,7 +512,7 @@ class Player(pygame.sprite.Sprite):
             elif self.a_frames < 720:
                 frame = self.s_aerial[1]
                 self.image = frame
-            if self.a_frames < 1440:
+            elif self.a_frames < 1440:
                 frame = self.s_aerial[2]
                 self.image = frame
             elif self.a_frames < 2160:
@@ -624,7 +608,329 @@ class Player(pygame.sprite.Sprite):
             self.isjump = False
             self.speedy = 0
 
+class Ranger_Player(Player):
+
+    def __init__(self):
+        super().__init__()
+
+        self.weight = 60
+
+        self.s_idle = SpriteStrip('assets/ranger/NES_Ranger_Idle_1_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_walking = SpriteStrip('assets/ranger/NES_Ranger_Walk_1_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_running = SpriteStrip('assets/ranger/NES_Ranger_Run_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_aerial = SpriteStrip('assets/ranger/NES_Ranger_JumpKick_strip4.png').get_strip(24, 32, 96, 32)
+        self.s_headbutt = SpriteStrip('assets/ranger/NES_Ranger_HeadButt_strip2.png').get_strip(24, 32, 48, 32)
+        self.i_crouch = pygame.image.load('assets/ranger/NES_Ranger_Get_Up.png').convert_alpha()
+        self.i_punch_1 = pygame.image.load('assets/ranger/NES_Ranger_Punch_1.png').convert_alpha()
+        self.i_punch_2 = pygame.image.load('assets/ranger/NES_Ranger_Punch_2.png').convert_alpha()
+        self.i_kick_1 = pygame.image.load('assets/ranger/NES_Ranger_Kick_1.png').convert_alpha()
+        self.i_kick_2 = pygame.image.load('assets/ranger/NES_Ranger_Kick_2.png').convert_alpha()
+        self.i_hurt = pygame.image.load('assets/ranger/NES_Ranger_Hurt.png').convert_alpha()
+        self.i_knockout = pygame.image.load('assets/ranger/NES_Ranger_Knockdown.png').convert_alpha()
+        self.i_death = pygame.image.load('assets/ranger/NES_Ranger_Own_Death.png').convert_alpha()
+
+    def reset(self):
+        super().reset()
+
+    def update_state(self, new):
+        super().update_state(new)
+
+    def handle_controls(self):
+        super().handle_controls()
+
+    def update(self):
+        super().update()
+
+    
+class Vigilante_Player(Player):
+
+    def __init__(self):
+        super().__init__()
+
+        self.weight = 60
+
+        self.s_idle = SpriteStrip('assets/vigilante/Vigilante_Idle_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_walking = SpriteStrip('assets/vigilante/Vigilante_Walk_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_running = SpriteStrip('assets/vigilante/Vigilante_Run_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_aerial = SpriteStrip('assets/vigilante/Vigilante_Jump_Kick_strip4.png').get_strip(24, 32, 96, 32)
+        self.s_headbutt = SpriteStrip('assets/vigilante/Vigilante_Head_Butt_strip2.png').get_strip(24, 32, 48, 32)
+        self.i_crouch = pygame.image.load('assets/vigilante/Vigilante_Get_Up.png').convert_alpha()
+        self.i_punch_1 = pygame.image.load('assets/vigilante/Vigilante_Punch_1.png').convert_alpha()
+        self.i_punch_2 = pygame.image.load('assets/vigilante/Vigilante_Punch_2.png').convert_alpha()
+        self.i_kick_1 = pygame.image.load('assets/vigilante/Vigilante_Kick_1.png').convert_alpha()
+        self.i_kick_2 = pygame.image.load('assets/vigilante/Vigilante_Kick_2.png').convert_alpha()
+        self.i_hurt = pygame.image.load('assets/vigilante/Vigilante_Hurt.png').convert_alpha()
+        self.i_knockout = pygame.image.load('assets/vigilante/Vigilante_Knock_out.png').convert_alpha()
+        self.i_death = pygame.image.load('assets/vigilante/Vigilante_Down_Death.png').convert_alpha()
+
+    def reset(self):
+        super().reset()
+
+    def update_state(self, new):
+        super().update_state(new)
+
+    def handle_controls(self):
+        super().handle_controls()
+
+    def update(self):
+        super().update()
+
+
+class Soldier_Player(Player):
+
+    def __init__(self):
+        super().__init__()
+
+        self.weight = 60
+
+        self.s_idle = SpriteStrip('assets/soldier/SMS_Soldier_Idle_2_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_walking = SpriteStrip('assets/soldier/SMS_Soldier_Walk_1_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_running = SpriteStrip('assets/soldier/SMS_Soldier_Run_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_aerial = SpriteStrip('assets/soldier/SMS_Soldier_Jump_Kick_strip4.png').get_strip(24, 32, 96, 32)
+        self.s_headbutt = SpriteStrip('assets/soldier/SMS_Soldier_HeadButt_strip2.png').get_strip(24, 32, 48, 32)
+        self.i_crouch = pygame.image.load('assets/soldier/SMS_Soldier_Pick_Up.png').convert_alpha()
+        self.i_punch_1 = pygame.image.load('assets/soldier/SMS_Soldier_Punch_1.png').convert_alpha()
+        self.i_punch_2 = pygame.image.load('assets/soldier/SMS_Soldier_Punch_2.png').convert_alpha()
+        self.i_kick_1 = pygame.image.load('assets/soldier/SMS_Soldier_Kick_1.png').convert_alpha()
+        self.i_kick_2 = pygame.image.load('assets/soldier/SMS_Soldier_Kick_2.png').convert_alpha()
+        self.i_hurt = pygame.image.load('assets/soldier/SMS_Soldier_Hurt.png').convert_alpha()
+        self.i_knockout = pygame.image.load('assets/soldier/SMS_Soldier_Knock_Down.png').convert_alpha()
+        self.i_death = pygame.image.load('assets/soldier/SMS_Soldier_Death.png').convert_alpha()
+
+    def reset(self):
+        super().reset()
+
+    def update_state(self, new):
+        super().update_state(new)
+
+    def handle_controls(self):
+        super().handle_controls()
+
+    def update(self):
+        super().update()
+
+class Renegade_Player(Player):
+
+    def __init__(self):
+        super().__init__()
+
+        self.weight = 120
+
+        self.s_idle = SpriteStrip('assets/renegade/Renegade_Idle_1_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_walking = SpriteStrip('assets/renegade/Renegade_Walk_1_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_running = SpriteStrip('assets/renegade/Renegade_Run_1_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_aerial = None
+        self.s_headbutt = SpriteStrip('assets/renegade/Renegade_Head_Butt_strip2.png').get_strip(24, 32, 48, 32)
+        self.i_crouch = pygame.image.load('assets/renegade/Renegade_Get_up.png').convert_alpha()
+        self.i_punch_1 = pygame.image.load('assets/renegade/Renegade_Punch_1.png').convert_alpha()
+        self.i_punch_2 = pygame.image.load('assets/renegade/Renegade_Punch_2.png').convert_alpha()
+        self.i_kick_1 = pygame.image.load('assets/renegade/Renegade_Kick_1.png').convert_alpha()
+        self.i_kick_2 = pygame.image.load('assets/renegade/Renegade_Kick_2.png').convert_alpha()
+        self.i_hurt = pygame.image.load('assets/renegade/Renegade_Hurt.png').convert_alpha()
+        self.i_knockout = pygame.image.load('assets/renegade/Renegade_Knock_Out.png').convert_alpha()
+        self.i_death = pygame.image.load('assets/renegade/Renegade_Death.png').convert_alpha()
+
+    def reset(self):
+        super().reset()
+
+    def update_state(self, new):
+        super().update_state(new)
+
+    def handle_controls(self):
+        super().handle_controls()
+        if self.state == 'JK':
+            self.state = 'K'
+            self.a_frames = 0
+            self.isdoublejump = False
+
+    def update(self):
+        super().update()
+
+class Agent_Player(Player):
+
+    def __init__(self):
+        super().__init__()
+
+        self.weight = 120
+
+        self.s_idle = SpriteStrip('assets/agent/SMS_Adv_Idle_Gun_1_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_walking = SpriteStrip('assets/agent/SMS_Adv_Idle_strip4.png').get_strip(24, 32, 96, 32)
+        self.s_running = SpriteStrip('assets/agent/SMS_Adv_Idle_strip4.png').get_strip(24, 32, 96, 32)
+        self.s_aerial = SpriteStrip('assets/agent/SMS_Adv_Jump_1_strip6.png').get_strip(32, 32, 192, 32)
+        self.s_headbutt = None
+        self.i_crouch = None
+        self.i_punch_1 = pygame.image.load('assets/agent/SMS_Adv_Punch_1.png').convert_alpha()
+        self.i_punch_2 = pygame.image.load('assets/agent/SMS_Adv_Punch_2.png').convert_alpha()
+        self.i_kick_1 = pygame.image.load('assets/agent/SMS_Adv_Kick_1.png').convert_alpha()
+        self.i_kick_2 = pygame.image.load('assets/agent/SMS_Adv_Kick_2.png').convert_alpha()
+        self.i_hurt = pygame.image.load('assets/agent/SMS_Adv_Hurt.png').convert_alpha()
+        self.i_knockout = pygame.image.load('assets/agent/SMS_Adv_Knockback.png').convert_alpha()
+        self.i_death = pygame.image.load('assets/agent/SMS_Adv_Down.png').convert_alpha()
+
+    def reset(self):
+        super().reset()
+
+    def update_state(self, new):
+        super().update_state(new)
+
+    def handle_controls(self):
+        super().handle_controls()
+        if self.state == 'CP':
+            self.state = 'P'
+            self.a_frames = 0
+            self.isdoublejump = False
+
+    def update(self):
+        pos_x = self.rect.x
+        pos_y = self.rect.y
+
+        self.speedx = 0 #Need these to make sure
+        self.update_state('I')
+
+        self.handle_controls()
+                
+        if self.state == "P":
+            self.speedx = 0
+            if self.a_frames == 540:
+                self.speedx = 10
+            if self.a_frames < 540:
+                frame = self.i_punch_1
+                self.image = frame
+            elif self.a_frames < 1080:
+                frame = self.i_punch_2
+                self.image = frame
+            else:
+                self.state = "I"
+                
+        if self.state == "K":
+            self.speedx = 0
+            if self.a_frames == 1080:
+                self.speedx = 10
+            if self.a_frames < 540:
+                frame = self.s_idle[0]
+                self.image = frame
+            elif self.a_frames < 1080:
+                frame = self.i_kick_1
+                self.image = frame
+            elif self.a_frames < 1620:
+                frame = self.i_kick_2
+                self.image = frame
+            else:
+                self.state = "I"
+                
+        if self.state == "JK":
+            self.speedx = 0
+            self.speedy = 0
+            if self.a_frames in [360, 720]:
+                self.speedx = 15
+                self.speedy = -8
+            elif self.a_frames == 1440:
+                self.speedx = 15
+            if self.a_frames < 360:
+                frame = self.s_aerial[0]
+                self.image = frame
+            elif self.a_frames < 720:
+                frame = self.s_aerial[1]
+                self.image = frame
+            elif self.a_frames < 1080:
+                frame = self.s_aerial[2]
+                self.image = frame
+            elif self.a_frames < 1440:
+                frame = self.s_aerial[3]
+                self.image = frame
+            elif self.a_frames < 1800:
+                frame = self.s_aerial[4]
+                self.image = frame
+            elif self.a_frames < 2160:
+                frame = self.s_aerial[5]
+                self.image = frame
+            else:
+                self.state = "C"
+                
+        if self.state == "H":
+            if self.a_frames < 2160:
+                self.speedx = int(-100*self.damage) // self.mass
+                self.speedy = int(-1*self.damage) // self.mass
+                self.isjump = True
+            else:
+                self.state = "I"
+
+        if self.state == "KO":
+            if self.a_frames < 2160:
+                self.speedx = int(-200*self.damage) // self.mass
+                self.speedy = int(-2*self.damage) // self.mass
+                self.isjump = True
+            else:
+                self.state = "I"
         
+        if self.state == "I" or self.state == "C":
+            frame = (self.i_frames // 360) % len(self.s_idle)
+            self.image = self.s_idle[frame]
+            self.speedx = 0
+        if self.state == "W":
+            frame = (pos_x // 10) % len(self.s_walking)
+            self.image = self.s_walking[frame]
+        if self.state == "R":
+            frame = (pos_x // 20) % len(self.s_running)
+            self.image = self.s_running[frame]
+        if self.state == "H":
+            frame = self.i_hurt
+            self.image = frame
+        if self.state == "KO":
+            frame = self.i_knockout
+            self.image = frame
+        if self.state == "D":
+            frame = self.i_death
+            self.image = frame
+            self.speedx = 0
+            self.speedy = 0
+            
+            
+        if self.direction == "L":
+            self.image = pygame.transform.flip(self.image, True, False)
+            self.speedx = self.speedx * (-1)
+
+        self.rect.x += self.speedx
+        self.rect.y += self.speedy
+        
+        self.a_frames += 60
+        self.j_frames += 60
+        self.i_frames += 60
+
+        
+        try:
+            # Set the floor for the current game scene
+            if scene.grid[self.rect.bottom // 24][self.rect.right // 24] in [1, 2] or scene.grid[self.rect.bottom // 24][self.rect.left // 24] in [1, 2]:
+                self.rect.bottom = ((self.rect.bottom // 24))*24 - 1
+                self.isjump = False
+                self.isdoublejump = False
+                self.speedy = 0
+            else:
+                self.isjump = True
+
+            # set the walls for rhe current game scene
+            if scene.grid[self.rect.bottom // 24][self.rect.right // 24] == 11 or scene.grid[self.rect.top // 24][self.rect.right // 24] == 11:
+                self.rect.right = ((self.rect.right // 24))*24 - 1
+
+            if scene.grid[self.rect.bottom // 24][self.rect.left // 24] == 21 or scene.grid[self.rect.top // 24][self.rect.left // 24] == 21:
+                self.rect.left = ((self.rect.left // 24))*24 + 24
+        except IndexError:
+            # if you fall off the map you die
+            self.state = 'D'
+
+        #Set Walls for Width and Height
+        if self.rect.right > WIDTH:
+            self.rect.right = WIDTH
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.top < 0:
+            self.rect.top = 0
+        if self.rect.bottom > HEIGHT:
+            self.rect.bottom = HEIGHT
+            self.isjump = False
+            self.speedy = 0
+    
+
 class SpriteStrip(object):
     def __init__(self, file_name):
         # You have to call `convert_alpha`, so that the background of
@@ -641,7 +947,7 @@ class SpriteStrip(object):
         return strip
             
 all_sprites = pygame.sprite.Group()
-player = Player()
+player = Agent_Player()
 all_sprites.add(player)
 
 cpu_player = CPU_Player()
