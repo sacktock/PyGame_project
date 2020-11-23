@@ -98,9 +98,10 @@ class CPU_Player(pygame.sprite.Sprite):
         self.rect.bottom = HEIGHT // 2 - 5  #pixels up from the bottom
         self.speedx = 0
         self.speedy = 8
+        self.mass = 60
         self.damage = 0.0
-        self.isjump = False
-        self.isdoublejump = False
+        self.isjump = True
+        self.isdoublejump = True
         self.direction = 'L'
         self.state = 'I'
         self.i_frames = 0 # idle frames
@@ -108,19 +109,19 @@ class CPU_Player(pygame.sprite.Sprite):
         self.j_frames = 0 # jumping frames
 
 
-        self.s_idle = SpriteStrip('assets/player/Vigilante_Idle_strip4.png').get_strip(16, 32, 64, 32)
-        self.s_walking = SpriteStrip('assets/player/Vigilante_Walk_strip4.png').get_strip(16, 32, 64, 32)
-        self.s_running = SpriteStrip('assets/player/Vigilante_Run_strip4.png').get_strip(16, 32, 64, 32)
-        self.s_aerial = SpriteStrip('assets/player/Vigilante_Jump_Kick_strip4.png').get_strip(24, 32, 96, 32)
-        self.s_headbutt = SpriteStrip('assets/player/Vigilante_Head_Butt_strip2.png').get_strip(24, 32, 48, 32)
-        self.i_crouch = pygame.image.load('assets/player/Vigilante_Get_Up.png').convert_alpha()
-        self.i_punch_1 = pygame.image.load('assets/player/Vigilante_Punch_1.png').convert_alpha()
-        self.i_punch_2 = pygame.image.load('assets/player/Vigilante_Punch_2.png').convert_alpha()
-        self.i_kick_1 = pygame.image.load('assets/player/Vigilante_Kick_1.png').convert_alpha()
-        self.i_kick_2 = pygame.image.load('assets/player/Vigilante_Kick_2.png').convert_alpha()
-        self.i_hurt = pygame.image.load('assets/player/Vigilante_Hurt.png').convert_alpha()
-        self.i_knockout = pygame.image.load('assets/player/Vigilante_Knock_out.png').convert_alpha()
-        self.i_death = pygame.image.load('assets/player/Vigilante_Down_Death.png').convert_alpha()
+        self.s_idle = SpriteStrip('assets/vigilante/Vigilante_Idle_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_walking = SpriteStrip('assets/vigilante/Vigilante_Walk_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_running = SpriteStrip('assets/vigilante/Vigilante_Run_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_aerial = SpriteStrip('assets/vigilante/Vigilante_Jump_Kick_strip4.png').get_strip(24, 32, 96, 32)
+        self.s_headbutt = SpriteStrip('assets/vigilante/Vigilante_Head_Butt_strip2.png').get_strip(24, 32, 48, 32)
+        self.i_crouch = pygame.image.load('assets/vigilante/Vigilante_Get_Up.png').convert_alpha()
+        self.i_punch_1 = pygame.image.load('assets/vigilante/Vigilante_Punch_1.png').convert_alpha()
+        self.i_punch_2 = pygame.image.load('assets/vigilante/Vigilante_Punch_2.png').convert_alpha()
+        self.i_kick_1 = pygame.image.load('assets/vigilante/Vigilante_Kick_1.png').convert_alpha()
+        self.i_kick_2 = pygame.image.load('assets/vigilante/Vigilante_Kick_2.png').convert_alpha()
+        self.i_hurt = pygame.image.load('assets/vigilante/Vigilante_Hurt.png').convert_alpha()
+        self.i_knockout = pygame.image.load('assets/vigilante/Vigilante_Knock_out.png').convert_alpha()
+        self.i_death = pygame.image.load('assets/vigilante/Vigilante_Down_Death.png').convert_alpha()
 
     def reset(self):
         self.rect.centerx = (WIDTH // 4) * 3 - 5   #center of rectangle
@@ -128,8 +129,8 @@ class CPU_Player(pygame.sprite.Sprite):
         self.speedx = 0
         self.speedy = 8
         self.damage = 0.0
-        self.isjump = False
-        self.isdoublejump = False
+        self.isjump = True
+        self.isdoublejump = True
         self.direction = 'L'
         self.state = 'I'
         self.i_frames = 0 # idle frames
@@ -162,17 +163,22 @@ class CPU_Player(pygame.sprite.Sprite):
         else:
             self.update_state('I')
         
-        
         if self.state == "R":
             self.speedx = 4
         if self.state == "W":
             self.speedx = 2
         if self.isjump == True:
-            self.speedy += 1
+            if self.j_frames < 360:
+                self.speedy = 0
+            elif self.j_frames == 360:
+                self.speedy = (-600 // self.mass)
+            else:
+                self.speedy += 1
 
     def make_jump(self):
         self.speedy = -8
         self.isjump = True
+        self.j_frames = 0
         
     def update(self):
         pos_x = self.rect.x
@@ -181,7 +187,7 @@ class CPU_Player(pygame.sprite.Sprite):
         self.speedx = 0 #Need these to make sure
 
         self.make_action()
-                
+
         if self.state == "P":
             self.speedx = 0
             if self.a_frames == 540:
@@ -256,16 +262,16 @@ class CPU_Player(pygame.sprite.Sprite):
 
         if self.state == "H":
             if self.a_frames < 2160:
-                self.speedx = int(-1*20*self.damage) // 72
-                self.speedy = int(-0.01*20*self.damage) // 72
+                self.speedx = int(-100*self.damage) // self.mass
+                self.speedy = int(-1*self.damage) // self.mass
                 self.isjump = True
             else:
                 self.state = "I"
 
         if self.state == "KO":
             if self.a_frames < 2160:
-                self.speedx = int(-2*20*self.damage) // 72
-                self.speedy = int(-0.02*20*self.damage) // 72
+                self.speedx = int(-200*self.damage) // self.mass
+                self.speedy = int(-2*self.damage) // self.mass
                 self.isjump = True
             else:
                 self.state = "I"
@@ -353,41 +359,38 @@ class Player(pygame.sprite.Sprite):
         self.rect.bottom = HEIGHT // 2 - 5  #pixels up from the bottom
         self.speedx = 0
         self.speedy = 0
-        self.accx = 0
-        self.accy = 10
+        self.mass = 60
         self.damage = 0.0
-        self.isjump = False
-        self.isdoublejump = False
+        self.isjump = True
+        self.isdoublejump = True
         self.direction = 'R'
         self.state = 'I'
         self.i_frames = 0 # idle frames
         self.a_frames = 0 # animation frames
         self.j_frames = 0 # jumping frames
 
-        self.s_idle = SpriteStrip('assets/player/Vigilante_Idle_strip4.png').get_strip(16, 32, 64, 32)
-        self.s_walking = SpriteStrip('assets/player/Vigilante_Walk_strip4.png').get_strip(16, 32, 64, 32)
-        self.s_running = SpriteStrip('assets/player/Vigilante_Run_strip4.png').get_strip(16, 32, 64, 32)
-        self.s_aerial = SpriteStrip('assets/player/Vigilante_Jump_Kick_strip4.png').get_strip(24, 32, 96, 32)
-        self.s_headbutt = SpriteStrip('assets/player/Vigilante_Head_Butt_strip2.png').get_strip(24, 32, 48, 32)
-        self.i_crouch = pygame.image.load('assets/player/Vigilante_Get_Up.png').convert_alpha()
-        self.i_punch_1 = pygame.image.load('assets/player/Vigilante_Punch_1.png').convert_alpha()
-        self.i_punch_2 = pygame.image.load('assets/player/Vigilante_Punch_2.png').convert_alpha()
-        self.i_kick_1 = pygame.image.load('assets/player/Vigilante_Kick_1.png').convert_alpha()
-        self.i_kick_2 = pygame.image.load('assets/player/Vigilante_Kick_2.png').convert_alpha()
-        self.i_hurt = pygame.image.load('assets/player/Vigilante_Hurt.png').convert_alpha()
-        self.i_knockout = pygame.image.load('assets/player/Vigilante_Knock_out.png').convert_alpha()
-        self.i_death = pygame.image.load('assets/player/Vigilante_Down_Death.png').convert_alpha()
+        self.s_idle = SpriteStrip('assets/vigilante/Vigilante_Idle_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_walking = SpriteStrip('assets/vigilante/Vigilante_Walk_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_running = SpriteStrip('assets/vigilante/Vigilante_Run_strip4.png').get_strip(16, 32, 64, 32)
+        self.s_aerial = SpriteStrip('assets/vigilante/Vigilante_Jump_Kick_strip4.png').get_strip(24, 32, 96, 32)
+        self.s_headbutt = SpriteStrip('assets/vigilante/Vigilante_Head_Butt_strip2.png').get_strip(24, 32, 48, 32)
+        self.i_crouch = pygame.image.load('assets/vigilante/Vigilante_Get_Up.png').convert_alpha()
+        self.i_punch_1 = pygame.image.load('assets/vigilante/Vigilante_Punch_1.png').convert_alpha()
+        self.i_punch_2 = pygame.image.load('assets/vigilante/Vigilante_Punch_2.png').convert_alpha()
+        self.i_kick_1 = pygame.image.load('assets/vigilante/Vigilante_Kick_1.png').convert_alpha()
+        self.i_kick_2 = pygame.image.load('assets/vigilante/Vigilante_Kick_2.png').convert_alpha()
+        self.i_hurt = pygame.image.load('assets/vigilante/Vigilante_Hurt.png').convert_alpha()
+        self.i_knockout = pygame.image.load('assets/vigilante/Vigilante_Knock_out.png').convert_alpha()
+        self.i_death = pygame.image.load('assets/vigilante/Vigilante_Down_Death.png').convert_alpha()
 
     def reset(self):
         self.rect.centerx = WIDTH // 4 + 5   #center of rectangle
         self.rect.bottom = HEIGHT // 2 - 5  #pixels up from the bottom
         self.speedx = 0
         self.speedy = 0
-        self.accx = 0
-        self.accy = 10
         self.damage = 0.0
-        self.isjump = False
-        self.isdoublejump = False
+        self.isjump = True
+        self.isdoublejump = True
         self.direction = 'R'
         self.state = 'I'
         self.a_frames = 0 # animation frames
@@ -422,7 +425,7 @@ class Player(pygame.sprite.Sprite):
             if self.j_frames < 360:
                 self.speedy = 0
             elif self.j_frames == 360:
-                self.speedy = -8
+                self.speedy = (-600 // self.mass)
             else:
                 self.speedy += 1
                 
@@ -536,16 +539,16 @@ class Player(pygame.sprite.Sprite):
                 
         if self.state == "H":
             if self.a_frames < 2160:
-                self.speedx = int(-1*20*self.damage) // 72
-                self.speedy = int(-0.01*20*self.damage) // 72
+                self.speedx = int(-100*self.damage) // self.mass
+                self.speedy = int(-1*self.damage) // self.mass
                 self.isjump = True
             else:
                 self.state = "I"
 
         if self.state == "KO":
             if self.a_frames < 2160:
-                self.speedx = int(-2*20*self.damage) // 72
-                self.speedy = int(-0.02*20*self.damage) // 72
+                self.speedx = int(-200*self.damage) // self.mass
+                self.speedy = int(-2*self.damage) // self.mass
                 self.isjump = True
             else:
                 self.state = "I"
@@ -583,6 +586,7 @@ class Player(pygame.sprite.Sprite):
 
         self.rect.x += self.speedx
         self.rect.y += self.speedy
+        
         self.a_frames += 60
         self.j_frames += 60
         self.i_frames += 60
@@ -652,16 +656,17 @@ def checkCollision(sprite1, sprite2):
     return pygame.sprite.collide_rect(sprite1, sprite2)
 
 def handle_collision(player1, player2):
-    if player1.rect.x < player2.rect.x and player1.direction == 'R':
+    if player1.rect.x < player2.rect.x and player1.direction == 'R' and player2.state not in ['H', 'KO']:
         if player1.state in ['P', 'K']:
             player2.state = 'H'
             player2.direction = 'L'
             player2.damage += 0.05
+            player2.forcex = -20
         elif player1.state in ['CP', 'JK']:
             player2.state = 'KO'
             player2.direction = 'L'
             player2.damage += 0.20
-    elif player1.rect.x > player2.rect.x and player1.direction == 'L':
+    elif player1.rect.x > player2.rect.x and player1.direction == 'L' and player2.state not in ['H', 'KO']:
         if player1.state in ['P', 'K']:
             player2.state = 'H'
             player2.direction = 'R'
@@ -670,7 +675,7 @@ def handle_collision(player1, player2):
             player2.state = 'KO'
             player2.direction = 'R'
             player2.damage += 0.20
-    if player2.rect.x < player1.rect.x and player2.direction == 'R':
+    if player2.rect.x < player1.rect.x and player2.direction == 'R' and player1.state not in ['H', 'KO']:
         if player2.state in ['P', 'K']:
             player1.state = 'H'
             player1.direction = 'L'
@@ -679,7 +684,7 @@ def handle_collision(player1, player2):
             player1.state = 'KO'
             player1.direction = 'L'
             player1.damage += 0.20
-    elif player2.rect.x > player1.rect.x and player2.direction == 'L':
+    elif player2.rect.x > player1.rect.x and player2.direction == 'L' and player1.state not in ['H', 'KO']:
         if player2.state in ['P', 'K']:
             player1.state = 'H'
             player1.direction = 'R'

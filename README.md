@@ -2,8 +2,9 @@
 - basic platform fighter / arena game implemented with pygame
 
 #TODO
+- comment and refactor game mechanics code
+- create unique mechanics for 4 more different characters
 - create game mode selection screen (Campaign, Free Play, Tutorial, Sandbox)
-- implement realistic physics mechanics with euler integration and acceleration
 - create 4 different maps
 - create 4 different CPU difficulties
 - create tutorial map and tutorial structure
