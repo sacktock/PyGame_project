@@ -53,7 +53,7 @@ class Scene():
                 [0,0,0,0,0,0,17,2,2,7,2,2,7,2,2,27,0,0,17,7,7,7,7,7,7,27,0,0,0,0,0,0,0],
                 [0,0,0,0,0,0,17,7,7,7,7,7,7,7,7,27,0,0,17,7,7,7,7,7,7,27,0,0,0,0,0,0,0]]
         elif map_id == "10 Downing":
-            self.bg_path = 'assets/background/10_downing.png'
+            self.bg_path = 'assets/background/10_downing.jpg'
             self.player_respawn_point = (288, 192)
             self.CPU_respawn_point = (504, 192)
             self.grid = [

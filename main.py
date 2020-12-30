@@ -5,6 +5,7 @@ import random
 from scene import *
 from player import *
 from GUI import *
+from item import *
 import sys
 
 # CONSTANTS
@@ -31,40 +32,6 @@ font_name = pygame.font.match_font('arial')
 font = pygame.font.Font("assets/fonts/ka1.ttf", 20)
 font_big = pygame.font.Font("assets/fonts/ka1.ttf", 40)
 font_small = pygame.font.Font("assets/fonts/VCR.ttf", 14)
-
-# player handling functions
-def CPU_action(player, cpu_player):
-        action_space = ['K']
-        direction_space = ['L', 'R']
-
-        if player.state != "D":
-            if player.rect.x < cpu_player.rect.x:
-                if cpu_player.state not in ['D', 'H', 'KO']:
-                    cpu_player.direction = 'L'
-            elif player.rect.x > cpu_player.rect.x:
-                if cpu_player.state not in ['D', 'H', 'KO']:
-                    cpu_player.direction = 'R'
-
-            if abs(player.rect.x - cpu_player.rect.x) < 10:
-                cpu_player.update_state(random.choice(action_space))
-            elif abs(player.rect.x - cpu_player.rect.x) < 150:
-                cpu_player.update_state('W')
-            else:
-                cpu_player.update_state('I')
-        else:
-            cpu_player.update_state('I')
-        
-        if cpu_player.state == "R":
-            cpu_player.speedx = 4
-        if cpu_player.state == "W":
-            cpu_player.speedx = 2
-        if cpu_player.isjump == True:
-            if cpu_player.j_frames < 360:
-                cpu_player.speedy = 0
-            elif cpu_player.j_frames == 360:
-                cpu_player.speedy = (-600 // cpu_player.mass)
-            else:
-                cpu_player.speedy += 1
                 
 def checkCollision(sprite1, sprite2):
     return pygame.sprite.collide_rect(sprite1, sprite2)
@@ -72,38 +39,61 @@ def checkCollision(sprite1, sprite2):
 def handle_collision(player1, player2):
     if player1.rect.x < player2.rect.x and player1.direction == 'R' and player2.state not in ['H', 'KO']:
         if player1.state in ['P', 'K']:
+            if player1.blue_empowered:
+                player2.damage += 0.30
+                player1.blue_empowered = False
             player2.state = 'H'
             player2.direction = 'L'
             player2.damage += 0.05
-            player2.forcex = -20
         elif player1.state in ['CP', 'JK']:
+            if player1.blue_empowered:
+                player2.damage += 0.30
+                player1.blue_empowered = False
             player2.state = 'KO'
             player2.direction = 'L'
             player2.damage += 0.20
     elif player1.rect.x > player2.rect.x and player1.direction == 'L' and player2.state not in ['H', 'KO']:
         if player1.state in ['P', 'K']:
+            if player1.blue_empowered:
+                player2.damage += 0.20
+                player1.blue_empowered = False
             player2.state = 'H'
             player2.direction = 'R'
             player2.damage += 0.05
         elif player1.state in ['CP', 'JK']:
+            if player1.blue_empowered:
+                player2.damage += 0.30
+                player1.blue_empowered = False
             player2.state = 'KO'
             player2.direction = 'R'
             player2.damage += 0.20
     if player2.rect.x < player1.rect.x and player2.direction == 'R' and player1.state not in ['H', 'KO']:
         if player2.state in ['P', 'K']:
+            if player2.blue_empowered:
+                player1.damage += 0.30
+                player2.blue_empowered = False
             player1.state = 'H'
             player1.direction = 'L'
             player1.damage += 0.05
         elif player2.state in ['CP', 'JK']:
+            if player2.blue_empowered:
+                player1.damage += 0.30
+                player2.blue_empowered = False
             player1.state = 'KO'
             player1.direction = 'L'
             player1.damage += 0.20
     elif player2.rect.x > player1.rect.x and player2.direction == 'L' and player1.state not in ['H', 'KO']:
         if player2.state in ['P', 'K']:
+            if player2.blue_empowered:
+                player1.damage += 0.30
+                player2.blue_empowered = False
             player1.state = 'H'
             player1.direction = 'R'
             player1.damage += 0.05
         elif player2.state in ['CP', 'JK']:
+            if player2.blue_empowered:
+                player1.damage += 0.30
+                player2.blue_empowered = False
             player1.state = 'KO'
             player1.direction = 'R'
             player1.damage += 0.20
@@ -157,7 +147,7 @@ def start_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if campaign_button.check():
-                        pass
+                        campaign()
                     elif freeplay_button.check():
                         character_selection_menu('freeplay')
                     elif sandbox_button.check():
@@ -270,7 +260,7 @@ def map_selection_menu(game_type, character_selection):
     running = True
     durham_image = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/background/durham.jpg')).convert(), (200, 112))
     london_image = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/background/london.jpg')).convert(), (200, 112))
-    downing_image = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/background/10_downing.png')).convert(), (200, 112))
+    downing_image = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/background/10_downing.jpg')).convert(), (200, 112))
     army_image = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/background/army_base.jpg')).convert(), (200, 112))
     
     while running:
@@ -366,6 +356,11 @@ def victory_screen(player):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_ESCAPE:
+                    return
+                if event.key==pygame.K_RETURN:
+                    return
 
         if a_frames > 500:
             return
@@ -391,12 +386,188 @@ def defeat_screen(player):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_ESCAPE:
+                    return
+                if event.key==pygame.K_RETURN:
+                    return
 
         if a_frames > 500:
             return
 
         pygame.display.update()
         clock.tick(FPS)
+
+def story_screen(text, seconds):
+    running = True
+    a_frames = 0
+    while running:
+        a_frames += 1
+        
+        if a_frames < 255:
+            col = (a_frames, a_frames, a_frames)
+            
+        screen.fill((0,0,0))
+        drawText(text, font_small, screen, WIDTH // 2, HEIGHT // 2, col)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_RETURN:
+                    return True
+                if event.key==pygame.K_ESCAPE:
+                    if not quit_menu():
+                        return False
+                
+        if a_frames > (seconds * FPS):
+            return True
+
+        pygame.display.update()
+        clock.tick(FPS)
+
+def campaign():
+    s = story_screen('COVID 19 VIGILANTE 2020 campaign ...', 6.0)
+    if not s:
+        return
+
+    s = story_screen('Before the covid19 pandemic Jimmy Allen was just an ordindary local lad', 8.0)
+    if not s:
+        return
+
+    s = story_screen("Jimmy's gran was one of the first people in the UK to fall sick", 8.0)
+    if not s:
+        return
+
+    s = story_screen("While Jimmy's gran spent her nights in the hospital", 6.0)
+    if not s:
+        return
+
+    s = story_screen("Jimmy spent his nights on the street making sure everyone was obeying government rules", 8.0)
+    if not s:
+        return
+
+    s = story_screen("Jimmy fought for his gran and the most vulnerble in our society", 8.0)
+    if not s:
+        return
+
+    s = story_screen("He became known as the COVID 19 VIGILANTE ...", 6.0)
+    if not s:
+        return
+
+    winner = False
+    while winner == False:
+        winner = game('campaign', 'Vigilante', 'Durham')
+        if winner == None:
+            return
+        
+    s = story_screen('After fighting countless anti maskers on the streets of Durham a rumour surfaced', 8.0)
+    if not s:
+        return
+
+    s = story_screen('Jimmy had cought wind of a rumour that a cure for covid19 had been found', 8.0)
+    if not s:
+        return
+
+    s = story_screen('Supposedly the cure was being kept secret by the government, but why?', 8.0)
+    if not s:
+        return
+
+    s = story_screen('Jimmy decided to head to london for answers but was soon caught in the middle of something', 8.0)
+    if not s:
+        return
+
+    s = story_screen('An extinction rebellion march? No one was obeying government rules', 8.0)
+    if not s:
+        return
+
+    s = story_screen('Jimmy decided to take the law into his hands once again ...', 6.0)
+    if not s:
+        return
+    
+    winner = False
+    while winner == False:
+        winner = game('campaign', 'Vigilante', 'London')
+        if winner == None:
+            return
+        
+    s = story_screen('After making quick work of the extinction rebellion march Jimmy was on the run', 8.0)
+    if not s:
+        return
+
+    s = story_screen('Jimmy headed straight to 10 downing street to get his answers', 8.0)
+    if not s:
+        return
+
+    s = story_screen('Before reaching Boris Johnson Jimmy was intercepted by a government agent', 8.0)
+    if not s:
+        return
+
+    s = story_screen('The spy was onto him and Jimmy had to act swiftly ...', 6.0)
+    if not s:
+        return
+    
+    winner = False
+    while winner == False:
+        winner = game('campaign', 'Vigilante', '10 Downing')
+        if winner == None:
+            return
+        
+    s = story_screen('Before the government agent fell unconcious he whispered to Jimmy', 8.0)
+    if not s:
+        return
+
+    s = story_screen('"Do what I could not a make the world a better place...', 6.0)
+    if not s:
+        return
+
+    s = story_screen('"go to these coordinates and you will find what you are looking for"', 6.0)
+    if not s:
+        return
+
+    s = story_screen('Without hesitation Jimmy got on the first LNER train', 6.0)
+    if not s:
+        return
+
+    s = story_screen('He was bound for the scottish highlands', 6.0)
+    if not s:
+        return
+
+    s = story_screen('What he would find he did not know ...', 6.0)
+    if not s:
+        return
+    
+    winner = False
+    while winner == False:
+        winner = game('campaign', 'Vigilante', 'Army Base')
+        if winner == None:
+            return
+        
+    s = story_screen("Jimmy took the unconcious Soldier's keycard and uncovered the government's secrets", 8.0)
+    if not s:
+        return
+
+    s = story_screen("Jimmy took the covid19 cure back to Durham and gave it to his gran", 8.0)
+    if not s:
+        return
+
+    s = story_screen("He had exposed the government and they had no choice but to resign", 8.0)
+    if not s:
+        return
+
+    s = story_screen("The new administration led by Jeremy Corbyn distributed the cure around the UK", 8.0)
+    if not s:
+        return
+
+    s = story_screen("The covid19 pandemic was finished", 4.0)
+    if not s:
+        return
+
+    s = story_screen("The End", 8.0)
+    if not s:
+        return
 
 def tutorial():
     running = True
@@ -457,6 +628,10 @@ def game(game_type, character_selection, map_selection):
     running = True
     scene = Scene(map_selection)
     bg = pygame.image.load(os.path.join('', scene.bg_path)).convert()
+    i_bar = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/GUI/bar.png')).convert_alpha(), (156, 40))
+    i_life = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/GUI/life.png')).convert_alpha(), (20, 20))
+
+    pygame.time.set_timer(USEREVENT+1, 15000)
     
     all_sprites = pygame.sprite.Group()
     player = None
@@ -499,13 +674,25 @@ def game(game_type, character_selection, map_selection):
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_RETURN:
                     if game_type in ['sandbox', 'tutorial']:
+                        player.lives = 3
                         player.reset()
                 if event.key==pygame.K_ESCAPE:
                     if not pause_menu():
-                        return
-                    
+                        return None
+            if event.type == USEREVENT+1:
+                random_drink = random.randint(1, 3)
+                if random_drink == 1:     
+                   item = Blue_Energy(scene, player, cpu_player)
+                   all_sprites.add(item)
+                elif random_drink == 2:
+                   item = Red_Energy(scene, player, cpu_player)
+                   all_sprites.add(item)
+                else:
+                   item = Yellow_Energy(scene, player, cpu_player)
+                   all_sprites.add(item)
+                   
         if game_type in ['freeplay', 'campaign']:
-            CPU_action(player, cpu_player)
+            cpu_player.make_action(player)
             if checkCollision(player, cpu_player):
                 handle_collision(player, cpu_player)
 
@@ -514,15 +701,31 @@ def game(game_type, character_selection, map_selection):
         
         all_sprites.draw(screen)
         scene.draw(screen)
-        
+
         if game_type in ['freeplay', 'campaign']:
-            drawText(player.name, font, screen, 90, 25, DARK)
-            drawText('Lives : '+ str(player.lives), font, screen, 90, 51, DARK)
-            drawText('Damage : '+ str(int(player.damage*100)), font, screen, 90, 77, DARK)
-            drawText('CPU', font, screen, 702, 25, DARK)
-            drawText('Lives : '+ str(cpu_player.lives), font, screen, 702, 51, DARK)
-            drawText('Damage : '+ str(int(cpu_player.damage*100)), font, screen, 702, 77, DARK)
-        
+            drawText(player.name, font, screen, 90, 25, BLACK)
+            for x in range(player.lives):
+                screen.blit(i_life, (20 + x*20, 85))
+            screen.blit(i_bar, (90 - 78, 61 - 20))
+            
+            drawText('DMG : '+ str(int(player.damage*100)), font, screen, 90, 61, DARK)
+            
+            drawText('CPU', font, screen, 702, 25, BLACK)
+            for x in range(cpu_player.lives):
+                screen.blit(i_life, (632 + x*20, 85))
+            screen.blit(i_bar, (702 - 78, 61 - 20))
+            drawText('DMG : '+ str(int(cpu_player.damage*100)), font, screen, 702, 61, DARK)
+        else:
+            if player.state == "D" and player.lives < 1:
+                drawText('Press ENTER to respawn', font_big, screen, WIDTH // 2, 50, BLACK)
+            else:
+                drawText(player.name, font, screen, 90, 25, BLACK)
+                for x in range(player.lives):
+                    screen.blit(i_life, (20 + x*20, 85))
+                screen.blit(i_bar, (90 - 78, 61 - 20))
+            
+                drawText('DMG : '+ str(int(player.damage*100)), font, screen, 90, 61, DARK)
+                
         pygame.display.flip()
         pygame.display.update()
         clock.tick(FPS)
@@ -530,10 +733,10 @@ def game(game_type, character_selection, map_selection):
         if game_type in ['freeplay', 'campaign']:
             if player.lives == 0:
                 defeat_screen(cpu_player)
-                return
+                return False
             elif cpu_player.lives == 0:
                 victory_screen(player)
-                return
+                return True
                 
 start_screen()
 start_menu()
