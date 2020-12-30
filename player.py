@@ -15,11 +15,12 @@ class CPU_Player(pygame.sprite.Sprite):
         height = 32
         self.image = pygame.Surface([width, height], pygame.SRCALPHA)
         self.rect = self.image.get_rect()
-        self.rect.centerx = (WIDTH // 4) * 3 - 5   #center of rectangle
-        self.rect.bottom = HEIGHT // 2 - 5  #pixels up from the bottom
+        self.rect.centerx = scene.CPU_respawn_point[0]   #center of rectangle
+        self.rect.bottom = scene.CPU_respawn_point[1]   #pixels up from the bottom
         self.speedx = 0
         self.speedy = 8
         self.damage = 0.0
+        self.lives = 3
         self.isjump = True
         self.isdoublejump = True
         self.direction = 'L'
@@ -29,8 +30,8 @@ class CPU_Player(pygame.sprite.Sprite):
         self.j_frames = 0 # jumping frames
 
     def reset(self):
-        self.rect.centerx = (WIDTH // 4) * 3 - 5   #center of rectangle
-        self.rect.bottom = HEIGHT // 2 - 5  #pixels up from the bottom
+        self.rect.centerx = self.scene.CPU_respawn_point[0]
+        self.rect.bottom = self.scene.CPU_respawn_point[1]
         self.speedx = 0
         self.speedy = 8
         self.damage = 0.0
@@ -169,7 +170,8 @@ class CPU_Player(pygame.sprite.Sprite):
             self.image = frame
             self.speedx = 0
             self.speedy = 0
-            
+            if self.lives > 0 and self.a_frames > 3000:
+                self.reset()
             
         if self.direction == "L":
             self.image = pygame.transform.flip(self.image, True, False)
@@ -186,7 +188,7 @@ class CPU_Player(pygame.sprite.Sprite):
     def handle_scene(self):
         try:
             # Set the floor for the current game scene
-            if self.scene.grid[self.rect.bottom // 24][self.rect.right // 24] in [1, 2] or self.scene.grid[self.rect.bottom // 24][self.rect.left // 24] in [1, 2]:
+            if self.scene.grid[self.rect.bottom // 24][self.rect.right // 24] in [1, 2, 3, 4, 5, 6, 7, 8] or self.scene.grid[self.rect.bottom // 24][self.rect.left // 24] in [1, 2, 3, 4, 5, 6, 7, 8]:
                 self.rect.bottom = ((self.rect.bottom // 24))*24 - 1
                 self.isjump = False
                 self.isdoublejump = False
@@ -195,14 +197,17 @@ class CPU_Player(pygame.sprite.Sprite):
                 self.isjump = True
 
             # set the walls for rhe current game scene
-            if self.scene.grid[self.rect.bottom // 24][self.rect.right // 24] == 11 or self.scene.grid[self.rect.top // 24][self.rect.right // 24] == 11:
+            if self.scene.grid[self.rect.bottom // 24][self.rect.right // 24] in [11, 12, 13, 14, 15, 16, 17, 18] or self.scene.grid[self.rect.top // 24][self.rect.right // 24] in [11, 12, 13, 14, 15, 16, 17, 18]:
                 self.rect.right = ((self.rect.right // 24))*24 - 1
 
-            if self.scene.grid[self.rect.bottom // 24][self.rect.left // 24] == 21 or self.scene.grid[self.rect.top // 24][self.rect.left // 24] == 21:
+            if self.scene.grid[self.rect.bottom // 24][self.rect.left // 24] in [21, 22, 23, 24, 25, 26, 27, 28] or self.scene.grid[self.rect.top // 24][self.rect.left // 24] in [21, 22, 23, 24, 25, 26, 27, 28]:
                 self.rect.left = ((self.rect.left // 24))*24 + 24
         except IndexError:
             # if you fall off the map you die
-            self.state = 'D'
+            if self.state != 'D':
+                self.state = 'D'
+                self.lives = self.lives - 1
+                self.a_frames = 0
 
         #Set Walls for Width and Height
         if self.rect.right > WIDTH:
@@ -223,6 +228,7 @@ class Vigilante_CPU(CPU_Player):
 
         self.mass = 60
         self.name = "Vigilante"
+        self.i_title_screen = pygame.image.load(os.path.join('', 'assets/vigilante/Vigilante_TitleScreen.png')).convert()
 
         self.s_idle = SpriteStrip('assets/vigilante/Vigilante_Idle_strip4.png').get_strip(16, 32, 64, 32)
         self.s_walking = SpriteStrip('assets/vigilante/Vigilante_Walk_strip4.png').get_strip(16, 32, 64, 32)
@@ -237,7 +243,7 @@ class Vigilante_CPU(CPU_Player):
         self.i_hurt = pygame.image.load('assets/vigilante/Vigilante_Hurt.png').convert_alpha()
         self.i_knockout = pygame.image.load('assets/vigilante/Vigilante_Knock_out.png').convert_alpha()
         self.i_death = pygame.image.load('assets/vigilante/Vigilante_Down_Death.png').convert_alpha()
-
+         
     def reset(self):
         super().reset()
 
@@ -260,6 +266,7 @@ class Ranger_CPU(CPU_Player):
 
         self.mass = 60
         self.name = "Ranger"
+        self.i_title_screen = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/ranger/NES_Ranger_TitleScreen.png')).convert(), (88, 136))
 
         self.s_idle = SpriteStrip('assets/ranger/NES_Ranger_Idle_1_strip4.png').get_strip(16, 32, 64, 32)
         self.s_walking = SpriteStrip('assets/ranger/NES_Ranger_Walk_1_strip4.png').get_strip(16, 32, 64, 32)
@@ -297,6 +304,7 @@ class Soldier_CPU(CPU_Player):
 
         self.mass = 75
         self.name = "Soldier"
+        self.i_title_screen = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/soldier/SMS_TitleScreen.png')).convert(), (88, 136))
 
         self.s_idle = SpriteStrip('assets/soldier/SMS_Soldier_Idle_2_strip4.png').get_strip(16, 32, 64, 32)
         self.s_walking = SpriteStrip('assets/soldier/SMS_Soldier_Walk_1_strip4.png').get_strip(16, 32, 64, 32)
@@ -335,6 +343,7 @@ class Renegade_CPU(CPU_Player):
 
         self.mass = 90
         self.name = "Renegade"
+        self.i_title_screen = pygame.image.load(os.path.join('', 'assets/renegade/Renegade_TitleScreen.png')).convert()
 
         self.s_idle = SpriteStrip('assets/renegade/Renegade_Idle_1_strip4.png').get_strip(16, 32, 64, 32)
         self.s_walking = SpriteStrip('assets/renegade/Renegade_Walk_1_strip4.png').get_strip(16, 32, 64, 32)
@@ -372,6 +381,7 @@ class Agent_CPU(CPU_Player):
 
         self.mass = 55
         self.name = "Agent"
+        self.i_title_screen = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/agent/SMS_Agent_TitleScreen.png')).convert(), (88, 136))
 
         self.s_idle = SpriteStrip('assets/agent/SMS_Adv_Idle_Gun_1_strip4.png').get_strip(16, 32, 64, 32)
         self.s_walking = SpriteStrip('assets/agent/SMS_Adv_Idle_strip4.png').get_strip(24, 32, 96, 32)
@@ -411,11 +421,12 @@ class Player(pygame.sprite.Sprite):
         height = 32
         self.image = pygame.Surface([width, height], pygame.SRCALPHA)
         self.rect = self.image.get_rect()
-        self.rect.centerx = WIDTH // 4 + 5   #center of rectangle
-        self.rect.bottom = HEIGHT // 2 - 5  #pixels up from the bottom
+        self.rect.centerx = scene.player_respawn_point[0]   #center of rectangle
+        self.rect.bottom = scene.player_respawn_point[1]  #pixels up from the bottom
         self.speedx = 0
-        self.speedy = 0
+        self.speedy = 8
         self.damage = 0.0
+        self.lives = 3
         self.isjump = True
         self.isdoublejump = True
         self.direction = 'R'
@@ -426,10 +437,10 @@ class Player(pygame.sprite.Sprite):
 
 
     def reset(self):
-        self.rect.centerx = WIDTH // 4 + 5   #center of rectangle
-        self.rect.bottom = HEIGHT // 2 - 5  #pixels up from the bottom
+        self.rect.centerx = self.scene.player_respawn_point[0]   #center of rectangle
+        self.rect.bottom = self.scene.player_respawn_point[1]  #pixels up from the bottom
         self.speedx = 0
-        self.speedy = 0
+        self.speedy = 8
         self.damage = 0.0
         self.isjump = True
         self.isdoublejump = True
@@ -618,6 +629,8 @@ class Player(pygame.sprite.Sprite):
             self.image = frame
             self.speedx = 0
             self.speedy = 0
+            if self.lives > 0 and self.a_frames > 3000:
+                self.reset()
             
             
         if self.direction == "L":
@@ -637,7 +650,7 @@ class Player(pygame.sprite.Sprite):
     def handle_scene(self):
         try:
             # Set the floor for the current game scene
-            if self.scene.grid[self.rect.bottom // 24][self.rect.right // 24] in [1, 2] or self.scene.grid[self.rect.bottom // 24][self.rect.left // 24] in [1, 2]:
+            if self.scene.grid[self.rect.bottom // 24][self.rect.right // 24] in [1, 2, 3, 4, 5, 6, 7, 8] or self.scene.grid[self.rect.bottom // 24][self.rect.left // 24] in [1, 2, 3, 4, 5, 6, 7, 8]:
                 self.rect.bottom = ((self.rect.bottom // 24))*24 - 1
                 self.isjump = False
                 self.isdoublejump = False
@@ -646,14 +659,17 @@ class Player(pygame.sprite.Sprite):
                 self.isjump = True
 
             # set the walls for rhe current game scene
-            if self.scene.grid[self.rect.bottom // 24][self.rect.right // 24] == 11 or self.scene.grid[self.rect.top // 24][self.rect.right // 24] == 11:
+            if self.scene.grid[self.rect.bottom // 24][self.rect.right // 24] in [11, 12, 13, 14, 15, 16, 17, 18] or self.scene.grid[self.rect.top // 24][self.rect.right // 24] in [11, 12, 13, 14, 15, 16, 17, 18]:
                 self.rect.right = ((self.rect.right // 24))*24 - 1
 
-            if self.scene.grid[self.rect.bottom // 24][self.rect.left // 24] == 21 or self.scene.grid[self.rect.top // 24][self.rect.left // 24] == 21:
+            if self.scene.grid[self.rect.bottom // 24][self.rect.left // 24] in [21, 22, 23, 24, 25, 26, 27, 28] or self.scene.grid[self.rect.top // 24][self.rect.left // 24] in [21, 22, 23, 24, 25, 26, 27, 28]:
                 self.rect.left = ((self.rect.left // 24))*24 + 24
         except IndexError:
             # if you fall off the map you die
-            self.state = 'D'
+            if self.state != 'D':
+                self.state = 'D'
+                self.lives = self.lives - 1
+                self.a_frames = 0
 
         #Set Walls for Width and Height
         if self.rect.right > WIDTH:
@@ -674,6 +690,7 @@ class Ranger_Player(Player):
 
         self.mass = 60
         self.name = "Ranger"
+        self.i_title_screen = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/ranger/NES_Ranger_TitleScreen.png')).convert(), (88, 136))
 
         self.s_idle = SpriteStrip('assets/ranger/NES_Ranger_Idle_1_strip4.png').get_strip(16, 32, 64, 32)
         self.s_walking = SpriteStrip('assets/ranger/NES_Ranger_Walk_1_strip4.png').get_strip(16, 32, 64, 32)
@@ -704,11 +721,12 @@ class Ranger_Player(Player):
     
 class Vigilante_Player(Player):
 
-    def __init__(self):
+    def __init__(self, scene):
         super().__init__(scene)
 
         self.mass = 60
         self.name = "Vigilante"
+        self.i_title_screen = pygame.image.load(os.path.join('', 'assets/vigilante/Vigilante_TitleScreen.png')).convert()
 
         self.s_idle = SpriteStrip('assets/vigilante/Vigilante_Idle_strip4.png').get_strip(16, 32, 64, 32)
         self.s_walking = SpriteStrip('assets/vigilante/Vigilante_Walk_strip4.png').get_strip(16, 32, 64, 32)
@@ -744,6 +762,7 @@ class Soldier_Player(Player):
 
         self.mass = 75
         self.name = "Soldier"
+        self.i_title_screen = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/soldier/SMS_TitleScreen.png')).convert(), (88, 136))
 
         self.s_idle = SpriteStrip('assets/soldier/SMS_Soldier_Idle_2_strip4.png').get_strip(16, 32, 64, 32)
         self.s_walking = SpriteStrip('assets/soldier/SMS_Soldier_Walk_1_strip4.png').get_strip(16, 32, 64, 32)
@@ -896,6 +915,8 @@ class Soldier_Player(Player):
             self.image = frame
             self.speedx = 0
             self.speedy = 0
+            if self.lives > 0 and self.a_frames > 3000:
+                self.reset()
             
             
         if self.direction == "L":
@@ -918,6 +939,7 @@ class Renegade_Player(Player):
 
         self.mass = 90
         self.name = "Renegade"
+        self.i_title_screen = pygame.image.load(os.path.join('', 'assets/renegade/Renegade_TitleScreen.png')).convert()
 
         self.s_idle = SpriteStrip('assets/renegade/Renegade_Idle_1_strip4.png').get_strip(16, 32, 64, 32)
         self.s_walking = SpriteStrip('assets/renegade/Renegade_Walk_1_strip4.png').get_strip(16, 32, 64, 32)
@@ -956,6 +978,7 @@ class Agent_Player(Player):
 
         self.mass = 55
         self.name = "Agent"
+        self.i_title_screen = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/agent/SMS_Agent_TitleScreen.png')).convert(), (88, 136))
 
         self.s_idle = SpriteStrip('assets/agent/SMS_Adv_Idle_Gun_1_strip4.png').get_strip(16, 32, 64, 32)
         self.s_walking = SpriteStrip('assets/agent/SMS_Adv_Idle_strip4.png').get_strip(24, 32, 96, 32)
@@ -1088,6 +1111,8 @@ class Agent_Player(Player):
             self.image = frame
             self.speedx = 0
             self.speedy = 0
+            if self.lives > 0 and self.a_frames > 3000:
+                self.reset()
             
             
         if self.direction == "L":

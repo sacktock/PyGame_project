@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 import os
 import random
-
+    
 class Button(object):
     def __init__(self,x,y,width,height,text_color,background_color,text):
         self.rect=pygame.Rect(x,y,width,height)
