@@ -184,6 +184,16 @@ class CPU_Player(pygame.sprite.Sprite):
             self.image = pygame.transform.flip(self.image, True, False)
             self.speedx = self.speedx * (-1)
 
+        if self.blue_empowered:
+            tint_image = self.image.copy()
+            tint_image.fill((0,0,190, 100), special_flags=pygame.BLEND_ADD)
+            self.image = tint_image
+
+        if self.yellow_empowered:
+            tint_image = self.image.copy()
+            tint_image.fill((190,190,0, 100), special_flags=pygame.BLEND_ADD)
+            self.image = tint_image
+
         self.rect.x += self.speedx
         self.rect.y += self.speedy
         self.a_frames += 60
@@ -733,6 +743,16 @@ class Player(pygame.sprite.Sprite):
             self.image = pygame.transform.flip(self.image, True, False)
             self.speedx = self.speedx * (-1)
 
+        if self.blue_empowered:
+            tint_image = self.image.copy()
+            tint_image.fill((0,0,190, 100), special_flags=pygame.BLEND_ADD)
+            self.image = tint_image
+
+        if self.yellow_empowered:
+            tint_image = self.image.copy()
+            tint_image.fill((190,190,0, 100), special_flags=pygame.BLEND_ADD)
+            self.image = tint_image
+
         self.rect.x += self.speedx
         self.rect.y += self.speedy
         
@@ -1025,6 +1045,16 @@ class Soldier_Player(Player):
         self.a_frames += 60
         self.j_frames += 60
         self.i_frames += 60
+
+        if self.blue_empowered:
+            tint_image = self.image.copy()
+            tint_image.fill((0,0,190, 100), special_flags=pygame.BLEND_ADD)
+            self.image = tint_image
+
+        if self.yellow_empowered:
+            tint_image = self.image.copy()
+            tint_image.fill((190,190,0, 100), special_flags=pygame.BLEND_ADD)
+            self.image = tint_image
         
         super().handle_scene()
 
@@ -1221,6 +1251,16 @@ class Agent_Player(Player):
         self.a_frames += 60
         self.j_frames += 60
         self.i_frames += 60
+
+        if self.blue_empowered:
+            tint_image = self.image.copy()
+            tint_image.fill((0,0,190, 100), special_flags=pygame.BLEND_ADD)
+            self.image = tint_image
+
+        if self.yellow_empowered:
+            tint_image = self.image.copy()
+            tint_image.fill((190,190,0, 100), special_flags=pygame.BLEND_ADD)
+            self.image = tint_image
 
         super().handle_scene()
     
