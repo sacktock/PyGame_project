@@ -91,6 +91,7 @@ class Blue_Energy(Energy_Drink):
     def handle_collision(self, player):
         if super().check_player_collision(player):
             player.blue_empowered = True
+            player.e_frames = 0
             self.kill()
 
 class Red_Energy(Energy_Drink):
@@ -106,7 +107,7 @@ class Red_Energy(Energy_Drink):
 
     def handle_collision(self, player):
         if super().check_player_collision(player):
-            player.damage -= 0.30
+            player.damage = 0
             self.kill()
 
 class Yellow_Energy(Energy_Drink):
@@ -123,4 +124,5 @@ class Yellow_Energy(Energy_Drink):
     def handle_collision(self, player):
         if super().check_player_collision(player):
             player.yellow_empowered = True
+            player.e_frames = 0
             self.kill()

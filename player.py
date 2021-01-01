@@ -28,6 +28,7 @@ class CPU_Player(pygame.sprite.Sprite):
         self.i_frames = 0 # idle frames
         self.a_frames = 0 # animation frames
         self.j_frames = 0 # jumping frames
+        self.e_frames = 0 # empowered frames
         self.blue_empowered = False
         self.yellow_empowered = False
 
@@ -44,6 +45,7 @@ class CPU_Player(pygame.sprite.Sprite):
         self.i_frames = 0 # idle frames
         self.a_frames = 0 # animation frames
         self.j_frames = 0 # jumping frames
+        self.e_frames = 0 # empowered frames
         self.blue_empowered = False
         self.yellow_empowered = False
 
@@ -53,10 +55,6 @@ class CPU_Player(pygame.sprite.Sprite):
             self.a_frames = 0
 
     def make_jump(self):
-        self.speedy = (-600 // self.mass)
-        if self.yellow_empowered:
-            self.speedy = int(self.speedy * 1.5)
-            self.yellow_empowered = False
         self.isjump = True
         self.j_frames = 0
         
@@ -184,21 +182,26 @@ class CPU_Player(pygame.sprite.Sprite):
             self.image = pygame.transform.flip(self.image, True, False)
             self.speedx = self.speedx * (-1)
 
-        if self.blue_empowered:
+        if self.blue_empowered and self.e_frames < 18000:
             tint_image = self.image.copy()
             tint_image.fill((0,0,190, 100), special_flags=pygame.BLEND_ADD)
             self.image = tint_image
+        else:
+            self.blue_empowered = False
 
-        if self.yellow_empowered:
+        if self.yellow_empowered and self.e_frames < 18000:
             tint_image = self.image.copy()
             tint_image.fill((190,190,0, 100), special_flags=pygame.BLEND_ADD)
             self.image = tint_image
+        else:
+            self.yellow_empowered = False
 
         self.rect.x += self.speedx
         self.rect.y += self.speedy
         self.a_frames += 60
         self.j_frames += 60
         self.i_frames += 60
+        self.e_frames += 60
 
         self.handle_scene()
 
@@ -268,7 +271,7 @@ class Ranger_CPU(CPU_Player):
         super().update_state(new)
 
     def make_action(self, player):
-        action_space = ['K', 'P']
+        action_space = ['K', 'CP', 'P', 'JK']
         direction_space = ['L', 'R']
 
         if player.state != "D":
@@ -278,16 +281,24 @@ class Ranger_CPU(CPU_Player):
             elif player.rect.x > self.rect.x:
                 if self.state not in ['D', 'H', 'KO']:
                     self.direction = 'R'
-
-            if abs(player.rect.x - self.rect.x) < 10:
-                self.update_state(random.choice(action_space))
-            elif abs(player.rect.x - self.rect.x) < 150:
+                
+            if abs(player.rect.y - self.rect.y) < 24:   
+                if abs(player.rect.x - self.rect.x) < 10:
+                    self.update_state(random.choice(action_space))
+                elif player.rect.x < 600 and player.rect.x > 168:
+                    if abs(player.rect.x - self.rect.x) < 50:
+                        self.update_state('R')
+                    else:
+                        self.update_state('W')
+            elif player.rect.x < 600 and player.rect.x > 168 and abs(player.rect.x - self.rect.x) > 10:
                 self.update_state('W')
             else:
                 self.update_state('I')
-        else:
-            self.update_state('I')
-        
+            
+        if (abs(self.rect.x - 432) < 10 and self.direction == 'L') or (abs(self.rect.x - 360) < 10 and self.direction == 'R') and self.state in ['W', 'R']:
+            self.update_state('R')
+            self.make_jump()
+
         if self.state == "R":
             self.speedx = 4
         if self.state == "W":
@@ -297,6 +308,8 @@ class Ranger_CPU(CPU_Player):
                 self.speedy = 0
             elif self.j_frames == 360:
                 self.speedy = (-600 // self.mass)
+                if self.yellow_empowered:
+                    self.speedy = int(self.speedy * 1.5)
             else:
                 self.speedy += 1
 
@@ -336,7 +349,7 @@ class Soldier_CPU(CPU_Player):
         super().update_state(new)
 
     def make_action(self, player):
-        action_space = ['K', 'P']
+        action_space = ['K', 'P', 'CP']
         direction_space = ['L', 'R']
 
         if player.state != "D":
@@ -346,16 +359,27 @@ class Soldier_CPU(CPU_Player):
             elif player.rect.x > self.rect.x:
                 if self.state not in ['D', 'H', 'KO']:
                     self.direction = 'R'
-
-            if abs(player.rect.x - self.rect.x) < 10:
-                self.update_state(random.choice(action_space))
-            elif abs(player.rect.x - self.rect.x) < 150:
+               
+            if abs(player.rect.y - self.rect.y) < 24:   
+                if abs(player.rect.x - self.rect.x) < 10:
+                    self.update_state(random.choice(action_space))
+                elif player.rect.x < 696 and player.rect.x > 96:
+                    if abs(player.rect.x - self.rect.x) < 50:
+                        self.update_state('R')
+                    else:
+                        self.update_state('W')
+            elif player.rect.x < 696 and player.rect.x > 96 and abs(player.rect.x - self.rect.x) > 10:
                 self.update_state('W')
             else:
                 self.update_state('I')
-        else:
-            self.update_state('I')
-        
+                    
+            if (abs(self.rect.x - 240) < 10 and self.direction == 'R') and self.state in ['W', 'R']:
+                self.update_state('R')
+                self.make_jump()
+            elif (abs(self.rect.x - 624) < 10 and self.direction == 'R') or (abs(self.rect.x - 504) < 10 and self.direction == 'L') and (self.rect.y) > 288 and self.state in ['W', 'R']:
+                self.update_state('R')
+                self.make_jump()
+
         if self.state == "R":
             self.speedx = 4
         if self.state == "W":
@@ -365,14 +389,168 @@ class Soldier_CPU(CPU_Player):
                 self.speedy = 0
             elif self.j_frames == 360:
                 self.speedy = (-600 // self.mass)
+                if self.yellow_empowered:
+                    self.speedy = int(self.speedy * 1.5)
             else:
                 self.speedy += 1
+                if self.speedy == 0:
+                    self.update_state('JK')
 
     def make_jump(self):
         super().make_jump()
 
     def update(self):
-        super().update()
+        pos_x = self.rect.x
+        pos_y = self.rect.y
+
+        if self.state == "P":
+            self.speedx = 0
+            if self.a_frames == 540:
+                self.speedx = 10
+            if self.a_frames < 540:
+                frame = self.i_punch_1
+                self.image = frame
+            elif self.a_frames < 1080:
+                frame = self.i_punch_2
+                self.image = frame
+            else:
+                self.state = "I"
+                
+        if self.state == "K":
+            self.speedx = 0
+            if self.a_frames == 1080:
+                self.speedx = 10
+            if self.a_frames < 540:
+                frame = self.s_idle[0]
+                self.image = frame
+            elif self.a_frames < 1080:
+                frame = self.i_kick_1
+                self.image = frame
+            elif self.a_frames < 1620:
+                frame = self.i_kick_2
+                self.image = frame
+            else:
+                self.state = "I"
+                
+        if self.state == "CP":
+            self.speedx = 0
+            if self.a_frames in [540, 1080, 1620, 2160, 2700, 3240]:
+                self.speedx = 3
+            if self.a_frames < 540:
+                frame = self.s_headbutt[0]
+                self.image = frame
+            elif self.a_frames < 1080:
+                frame = self.s_headbutt[1]
+                self.image = frame
+            elif self.a_frames < 1620:
+                frame = self.s_headbutt[2]
+                self.image = frame
+            elif self.a_frames < 2160:
+                frame = self.s_headbutt[3]
+                self.image = frame
+            elif self.a_frames < 2700:
+                frame = self.s_headbutt[4]
+                self.image = frame
+            elif self.a_frames < 3240:
+                frame = self.s_headbutt[5]
+                self.image = frame
+            else:
+                self.state = "C"
+                
+        if self.state == "JK":
+            self.speedx = 0
+            self.speedy = 0
+            if self.a_frames in [360, 720]:
+                self.speedx = 15
+                self.speedy = -8
+            elif self.a_frames == 1440:
+                self.speedx = 15
+                self.speedy = 16
+            if self.a_frames < 360:
+                frame = self.s_aerial[0]
+                self.image = frame
+            elif self.a_frames < 720:
+                frame = self.s_aerial[1]
+                self.image = frame
+            if self.a_frames < 1440:
+                frame = self.s_aerial[2]
+                self.image = frame
+            elif self.a_frames < 2160:
+                frame = self.s_aerial[3]
+                self.image = frame
+            else:
+                self.state = "C"
+
+        if self.state == "H":
+            if self.a_frames < 2160:
+                self.speedx = int(-100*self.damage) // self.mass
+                self.speedy = int(-1*self.damage) // self.mass
+                self.isjump = True
+            else:
+                self.state = "I"
+
+        if self.state == "KO":
+            if self.a_frames < 2160:
+                self.speedx = int(-200*self.damage) // self.mass
+                self.speedy = int(-2*self.damage) // self.mass
+                self.isjump = True
+            else:
+                self.state = "I"
+            
+        if self.state == "I":
+            frame = (self.i_frames // 360) % len(self.s_idle)
+            self.image = self.s_idle[frame]
+            self.speedx = 0
+        if self.state == "W":
+            frame = (pos_x // 10) % len(self.s_walking)
+            self.image = self.s_walking[frame]
+        if self.state == "R":
+            frame = (pos_x // 20) % len(self.s_running)
+            self.image = self.s_running[frame]
+        if self.state == "C":
+            frame = self.i_crouch
+            self.image = frame
+            self.speedx = 0
+        if self.state == "H":
+            frame = self.i_hurt
+            self.image = frame
+        if self.state == "KO":
+            frame = self.i_knockout
+            self.image = frame
+        if self.state == "D":
+            frame = self.i_death
+            self.image = frame
+            self.speedx = 0
+            self.speedy = 0
+            if self.lives > 0 and self.a_frames > 3000:
+                self.reset()
+            
+        if self.direction == "L":
+            self.image = pygame.transform.flip(self.image, True, False)
+            self.speedx = self.speedx * (-1)
+
+        if self.blue_empowered and self.e_frames < 18000:
+            tint_image = self.image.copy()
+            tint_image.fill((0,0,190, 100), special_flags=pygame.BLEND_ADD)
+            self.image = tint_image
+        else:
+            self.blue_empowered = False
+
+        if self.yellow_empowered and self.e_frames < 18000:
+            tint_image = self.image.copy()
+            tint_image.fill((190,190,0, 100), special_flags=pygame.BLEND_ADD)
+            self.image = tint_image
+        else:
+            self.yellow_empowered = False
+
+        self.rect.x += self.speedx
+        self.rect.y += self.speedy
+        self.a_frames += 60
+        self.j_frames += 60
+        self.i_frames += 60
+        self.e_frames += 60
+
+        super().handle_scene()
     
 
 class Renegade_CPU(CPU_Player):
@@ -405,7 +583,7 @@ class Renegade_CPU(CPU_Player):
         super().update_state(new)
 
     def make_action(self, player):
-        action_space = ['K', 'P']
+        action_space = ['K', 'CP', 'P']
         direction_space = ['L', 'R']
 
         if player.state != "D":
@@ -415,15 +593,21 @@ class Renegade_CPU(CPU_Player):
             elif player.rect.x > self.rect.x:
                 if self.state not in ['D', 'H', 'KO']:
                     self.direction = 'R'
-
-            if abs(player.rect.x - self.rect.x) < 10:
-                self.update_state(random.choice(action_space))
-            elif abs(player.rect.x - self.rect.x) < 150:
+                    
+            if abs(player.rect.y - self.rect.y) < 24:
+                
+                if abs(player.rect.x - self.rect.x) < 10:
+                    self.update_state(random.choice(action_space))
+                elif player.rect.x < 576 and player.rect.x > 240:
+                    if abs(player.rect.x - self.rect.x) < 50:
+                        self.update_state('R')
+                    else:
+                        self.update_state('W')
+                        
+            elif player.rect.x < 576 and player.rect.x > 240 and abs(player.rect.x - self.rect.x) > 10:
                 self.update_state('W')
             else:
                 self.update_state('I')
-        else:
-            self.update_state('I')
         
         if self.state == "R":
             self.speedx = 4
@@ -434,6 +618,8 @@ class Renegade_CPU(CPU_Player):
                 self.speedy = 0
             elif self.j_frames == 360:
                 self.speedy = (-600 // self.mass)
+                if self.yellow_empowered:
+                    self.speedy = int(self.speedy * 1.5)
             else:
                 self.speedy += 1
 
@@ -473,7 +659,7 @@ class Agent_CPU(CPU_Player):
         super().update_state(new)
 
     def make_action(self, player):
-        action_space = ['K', 'P']
+        action_space = ['K', 'P', 'JK']
         direction_space = ['L', 'R']
 
         if player.state != "D":
@@ -483,16 +669,27 @@ class Agent_CPU(CPU_Player):
             elif player.rect.x > self.rect.x:
                 if self.state not in ['D', 'H', 'KO']:
                     self.direction = 'R'
-
-            if abs(player.rect.x - self.rect.x) < 10:
-                self.update_state(random.choice(action_space))
-            elif abs(player.rect.x - self.rect.x) < 150:
+                
+            if abs(player.rect.y - self.rect.y) < 24:   
+                if abs(player.rect.x - self.rect.x) < 10:
+                    self.update_state(random.choice(action_space))
+                elif player.rect.x < 720 and player.rect.x > 72:
+                    if abs(player.rect.x - self.rect.x) < 50:
+                        self.update_state('R')
+                    else:
+                        self.update_state('W')
+            elif player.rect.x < 720 and player.rect.x > 72 and abs(player.rect.x - self.rect.x) > 10:
                 self.update_state('W')
             else:
                 self.update_state('I')
-        else:
-            self.update_state('I')
-        
+            
+        if (abs(self.rect.x - 264) < 10 and self.direction == 'L') or (abs(self.rect.x - 168) < 10 and self.direction == 'R') and self.state in ['W', 'R']:
+            self.update_state('R')
+            self.make_jump()
+        elif (abs(self.rect.x - 576) < 10 and self.direction == 'L') or (abs(self.rect.x - 504) < 10 and self.direction == 'R') and self.state in ['W', 'R']:
+            self.update_state('R')
+            self.make_jump()
+
         if self.state == "R":
             self.speedx = 4
         if self.state == "W":
@@ -502,14 +699,144 @@ class Agent_CPU(CPU_Player):
                 self.speedy = 0
             elif self.j_frames == 360:
                 self.speedy = (-600 // self.mass)
+                if self.yellow_empowered:
+                    self.speedy = int(self.speedy * 1.5)
             else:
                 self.speedy += 1
+                if self.speedy == 0:
+                    self.update_state('JK')
 
     def make_jump(self):
         super().make_jump()
 
     def update(self):
-        super().update()
+        pos_x = self.rect.x
+        pos_y = self.rect.y
+
+        if self.state == "P":
+            self.speedx = 0
+            if self.a_frames == 540:
+                self.speedx = 10
+            if self.a_frames < 540:
+                frame = self.i_punch_1
+                self.image = frame
+            elif self.a_frames < 1080:
+                frame = self.i_punch_2
+                self.image = frame
+            else:
+                self.state = "I"
+                
+        if self.state == "K":
+            self.speedx = 0
+            if self.a_frames == 1080:
+                self.speedx = 10
+            if self.a_frames < 540:
+                frame = self.s_idle[0]
+                self.image = frame
+            elif self.a_frames < 1080:
+                frame = self.i_kick_1
+                self.image = frame
+            elif self.a_frames < 1620:
+                frame = self.i_kick_2
+                self.image = frame
+            else:
+                self.state = "I"
+                
+        if self.state == "JK":
+            self.speedx = 0
+            self.speedy = 0
+            if self.a_frames in [360, 720]:
+                self.speedx = 15
+                self.speedy = -8
+            elif self.a_frames == 1440:
+                self.speedx = 15
+            if self.a_frames < 360:
+                frame = self.s_aerial[0]
+                self.image = frame
+            elif self.a_frames < 720:
+                frame = self.s_aerial[1]
+                self.image = frame
+            elif self.a_frames < 1080:
+                frame = self.s_aerial[2]
+                self.image = frame
+            elif self.a_frames < 1440:
+                frame = self.s_aerial[3]
+                self.image = frame
+            elif self.a_frames < 1800:
+                frame = self.s_aerial[4]
+                self.image = frame
+            elif self.a_frames < 2160:
+                frame = self.s_aerial[5]
+                self.image = frame
+            else:
+                self.state = "C"
+
+        if self.state == "H":
+            if self.a_frames < 2160:
+                self.speedx = int(-100*self.damage) // self.mass
+                self.speedy = int(-1*self.damage) // self.mass
+                self.isjump = True
+            else:
+                self.state = "I"
+
+        if self.state == "KO":
+            if self.a_frames < 2160:
+                self.speedx = int(-200*self.damage) // self.mass
+                self.speedy = int(-2*self.damage) // self.mass
+                self.isjump = True
+            else:
+                self.state = "I"
+            
+        if self.state == "I" or self.state == "C":
+            frame = (self.i_frames // 360) % len(self.s_idle)
+            self.image = self.s_idle[frame]
+            self.speedx = 0
+        if self.state == "W":
+            frame = (pos_x // 10) % len(self.s_walking)
+            self.image = self.s_walking[frame]
+        if self.state == "R":
+            frame = (pos_x // 20) % len(self.s_running)
+            self.image = self.s_running[frame]
+        if self.state == "H":
+            frame = self.i_hurt
+            self.image = frame
+        if self.state == "KO":
+            frame = self.i_knockout
+            self.image = frame
+        if self.state == "D":
+            frame = self.i_death
+            self.image = frame
+            self.speedx = 0
+            self.speedy = 0
+            if self.lives > 0 and self.a_frames > 3000:
+                self.reset()
+            
+        if self.direction == "L":
+            self.image = pygame.transform.flip(self.image, True, False)
+            self.speedx = self.speedx * (-1)
+
+        if self.blue_empowered and self.e_frames < 18000:
+            tint_image = self.image.copy()
+            tint_image.fill((0,0,190, 100), special_flags=pygame.BLEND_ADD)
+            self.image = tint_image
+        else:
+            self.blue_empowered = False
+
+        if self.yellow_empowered and self.e_frames < 18000:
+            tint_image = self.image.copy()
+            tint_image.fill((190,190,0, 100), special_flags=pygame.BLEND_ADD)
+            self.image = tint_image
+        else:
+            self.yellow_empowered = False
+
+        self.rect.x += self.speedx
+        self.rect.y += self.speedy
+        self.a_frames += 60
+        self.j_frames += 60
+        self.i_frames += 60
+        self.e_frames += 60
+
+        super().handle_scene()
     
 class Player(pygame.sprite.Sprite):
 
@@ -533,6 +860,7 @@ class Player(pygame.sprite.Sprite):
         self.i_frames = 0 # idle frames
         self.a_frames = 0 # animation frames
         self.j_frames = 0 # jumping frames
+        self.e_frames = 0 # empowered frames
         self.blue_empowered = False
         self.yellow_empowered = False
 
@@ -550,6 +878,7 @@ class Player(pygame.sprite.Sprite):
         self.a_frames = 0 # animation frames
         self.j_frames = 0 # jumping frames
         self.i_frames = 0 # idle frames
+        self.e_frames = 0 # eempowered frames
         self.blue_empowered = False
         self.yellow_empowered = False
 
@@ -583,7 +912,6 @@ class Player(pygame.sprite.Sprite):
                 self.speedy = (-600 // self.mass)
                 if self.yellow_empowered:
                     self.speedy = int(self.speedy * 1.5)
-                    self.yellow_empowered = False
             else:
                 self.speedy += 1
                 
@@ -743,15 +1071,19 @@ class Player(pygame.sprite.Sprite):
             self.image = pygame.transform.flip(self.image, True, False)
             self.speedx = self.speedx * (-1)
 
-        if self.blue_empowered:
+        if self.blue_empowered and self.e_frames < 18000:
             tint_image = self.image.copy()
             tint_image.fill((0,0,190, 100), special_flags=pygame.BLEND_ADD)
             self.image = tint_image
+        else:
+            self.blue_empowered = False
 
-        if self.yellow_empowered:
+        if self.yellow_empowered and self.e_frames < 18000:
             tint_image = self.image.copy()
             tint_image.fill((190,190,0, 100), special_flags=pygame.BLEND_ADD)
             self.image = tint_image
+        else:
+            self.yellow_empowered = False
 
         self.rect.x += self.speedx
         self.rect.y += self.speedy
@@ -759,6 +1091,7 @@ class Player(pygame.sprite.Sprite):
         self.a_frames += 60
         self.j_frames += 60
         self.i_frames += 60
+        self.e_frames += 60
         
         self.handle_scene()
 
@@ -1033,11 +1366,24 @@ class Soldier_Player(Player):
             self.speedy = 0
             if self.lives > 0 and self.a_frames > 3000:
                 self.reset()
-            
-            
+             
         if self.direction == "L":
             self.image = pygame.transform.flip(self.image, True, False)
             self.speedx = self.speedx * (-1)
+
+        if self.blue_empowered and self.e_frames < 18000:
+            tint_image = self.image.copy()
+            tint_image.fill((0,0,190, 100), special_flags=pygame.BLEND_ADD)
+            self.image = tint_image
+        else:
+            self.blue_empowered = False
+
+        if self.yellow_empowered and self.e_frames < 18000:
+            tint_image = self.image.copy()
+            tint_image.fill((190,190,0, 100), special_flags=pygame.BLEND_ADD)
+            self.image = tint_image
+        else:
+            self.yellow_empowered = False
 
         self.rect.x += self.speedx
         self.rect.y += self.speedy
@@ -1045,17 +1391,8 @@ class Soldier_Player(Player):
         self.a_frames += 60
         self.j_frames += 60
         self.i_frames += 60
+        self.e_frames += 60
 
-        if self.blue_empowered:
-            tint_image = self.image.copy()
-            tint_image.fill((0,0,190, 100), special_flags=pygame.BLEND_ADD)
-            self.image = tint_image
-
-        if self.yellow_empowered:
-            tint_image = self.image.copy()
-            tint_image.fill((190,190,0, 100), special_flags=pygame.BLEND_ADD)
-            self.image = tint_image
-        
         super().handle_scene()
 
 class Renegade_Player(Player):
@@ -1240,10 +1577,23 @@ class Agent_Player(Player):
             if self.lives > 0 and self.a_frames > 3000:
                 self.reset()
             
-            
         if self.direction == "L":
             self.image = pygame.transform.flip(self.image, True, False)
             self.speedx = self.speedx * (-1)
+
+        if self.blue_empowered and self.e_frames < 18000:
+            tint_image = self.image.copy()
+            tint_image.fill((0,0,190, 100), special_flags=pygame.BLEND_ADD)
+            self.image = tint_image
+        else:
+            self.blue_empowered = False
+
+        if self.yellow_empowered and self.e_frames < 18000:
+            tint_image = self.image.copy()
+            tint_image.fill((190,190,0, 100), special_flags=pygame.BLEND_ADD)
+            self.image = tint_image
+        else:
+            self.yellow_empowered = False
 
         self.rect.x += self.speedx
         self.rect.y += self.speedy
@@ -1251,16 +1601,7 @@ class Agent_Player(Player):
         self.a_frames += 60
         self.j_frames += 60
         self.i_frames += 60
-
-        if self.blue_empowered:
-            tint_image = self.image.copy()
-            tint_image.fill((0,0,190, 100), special_flags=pygame.BLEND_ADD)
-            self.image = tint_image
-
-        if self.yellow_empowered:
-            tint_image = self.image.copy()
-            tint_image.fill((190,190,0, 100), special_flags=pygame.BLEND_ADD)
-            self.image = tint_image
+        self.e_frames += 60
 
         super().handle_scene()
     

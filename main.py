@@ -40,15 +40,13 @@ def handle_collision(player1, player2):
     if player1.rect.x < player2.rect.x and player1.direction == 'R' and player2.state not in ['H', 'KO']:
         if player1.state in ['P', 'K']:
             if player1.blue_empowered:
-                player2.damage += 0.30
-                player1.blue_empowered = False
+                player2.damage += 0.20
             player2.state = 'H'
             player2.direction = 'L'
             player2.damage += 0.05
         elif player1.state in ['CP', 'JK']:
             if player1.blue_empowered:
-                player2.damage += 0.30
-                player1.blue_empowered = False
+                player2.damage += 0.20
             player2.state = 'KO'
             player2.direction = 'L'
             player2.damage += 0.20
@@ -56,44 +54,38 @@ def handle_collision(player1, player2):
         if player1.state in ['P', 'K']:
             if player1.blue_empowered:
                 player2.damage += 0.20
-                player1.blue_empowered = False
             player2.state = 'H'
             player2.direction = 'R'
             player2.damage += 0.05
         elif player1.state in ['CP', 'JK']:
             if player1.blue_empowered:
-                player2.damage += 0.30
-                player1.blue_empowered = False
+                player2.damage += 0.20
             player2.state = 'KO'
             player2.direction = 'R'
             player2.damage += 0.20
     if player2.rect.x < player1.rect.x and player2.direction == 'R' and player1.state not in ['H', 'KO']:
         if player2.state in ['P', 'K']:
             if player2.blue_empowered:
-                player1.damage += 0.30
-                player2.blue_empowered = False
+                player1.damage += 0.20
             player1.state = 'H'
             player1.direction = 'L'
             player1.damage += 0.05
         elif player2.state in ['CP', 'JK']:
             if player2.blue_empowered:
-                player1.damage += 0.30
-                player2.blue_empowered = False
+                player1.damage += 0.20
             player1.state = 'KO'
             player1.direction = 'L'
             player1.damage += 0.20
     elif player2.rect.x > player1.rect.x and player2.direction == 'L' and player1.state not in ['H', 'KO']:
         if player2.state in ['P', 'K']:
             if player2.blue_empowered:
-                player1.damage += 0.30
-                player2.blue_empowered = False
+                player1.damage += 0.20
             player1.state = 'H'
             player1.direction = 'R'
             player1.damage += 0.05
         elif player2.state in ['CP', 'JK']:
             if player2.blue_empowered:
-                player1.damage += 0.30
-                player2.blue_empowered = False
+                player1.damage += 0.20
             player1.state = 'KO'
             player1.direction = 'R'
             player1.damage += 0.20
