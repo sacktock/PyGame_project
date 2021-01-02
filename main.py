@@ -171,9 +171,7 @@ def quit_menu():
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key==pygame.K_ESCAPE:
-                    running = False
-                if event.key==pygame.K_BACKSPACE:
-                    running = False
+                    return True
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if continue_button.check():
@@ -421,27 +419,27 @@ def story_screen(text, seconds):
         clock.tick(FPS)
 
 def campaign():
-    s = story_screen('COVID 19 VIGILANTE 2020 campaign ...', 6.0)
+    s = story_screen('COVID 19 VIGILANTE 2020 campaign', 6.0)
     if not s:
         return
 
-    s = story_screen('Before the covid19 pandemic Jimmy Allen was just an ordindary local lad', 8.0)
+    s = story_screen('Before the covid19 pandemic Kieran Smith was just an ordindary local lad', 8.0)
     if not s:
         return
 
-    s = story_screen("Jimmy's gran was one of the first people in the UK to fall sick", 8.0)
+    s = story_screen("Kieran's gran was one of the first people in the UK to fall sick", 8.0)
     if not s:
         return
 
-    s = story_screen("While Jimmy's gran spent her nights in the hospital", 6.0)
+    s = story_screen("While Kieran's gran spent her nights in the hospital", 6.0)
     if not s:
         return
 
-    s = story_screen("Jimmy spent his nights on the street making sure everyone was obeying government rules", 8.0)
+    s = story_screen("Kieran spent his nights on the street making sure everyone was obeying government regulations", 8.0)
     if not s:
         return
 
-    s = story_screen("Jimmy fought for his gran and the most vulnerble in our society", 8.0)
+    s = story_screen("Kieran fought for his gran and the most vulnerble in our society", 8.0)
     if not s:
         return
 
@@ -455,11 +453,11 @@ def campaign():
         if winner == None:
             return
         
-    s = story_screen('After fighting countless anti maskers on the streets of Durham a rumour surfaced', 8.0)
+    s = story_screen('After fighting countless anti-maskers on the streets of Durham a rumour surfaced', 8.0)
     if not s:
         return
 
-    s = story_screen('Jimmy had cought wind of a rumour that a cure for covid19 had been found', 8.0)
+    s = story_screen('Kieran had cought wind of a rumour that a cure for covid19 had been found', 8.0)
     if not s:
         return
 
@@ -467,15 +465,15 @@ def campaign():
     if not s:
         return
 
-    s = story_screen('Jimmy decided to head to london for answers but was soon caught in the middle of something', 8.0)
+    s = story_screen('Kieran decided to head to london for answers but was soon caught in the middle of something', 8.0)
     if not s:
         return
 
-    s = story_screen('An extinction rebellion march? No one was obeying government rules', 8.0)
+    s = story_screen('An extinction rebellion march? No one was obeying social distancing rules', 8.0)
     if not s:
         return
 
-    s = story_screen('Jimmy decided to take the law into his hands once again ...', 6.0)
+    s = story_screen('The vigilante decided to take the law into his hands once again ...', 6.0)
     if not s:
         return
     
@@ -485,19 +483,19 @@ def campaign():
         if winner == None:
             return
         
-    s = story_screen('After making quick work of the extinction rebellion march Jimmy was on the run', 8.0)
+    s = story_screen('After making quick work of the extinction rebellion march Kieran was on the run', 8.0)
     if not s:
         return
 
-    s = story_screen('Jimmy headed straight to 10 downing street to get his answers', 8.0)
+    s = story_screen('Kieran made his way to 10 downing street to get his answers', 8.0)
     if not s:
         return
 
-    s = story_screen('Before reaching Boris Johnson Jimmy was intercepted by a government agent', 8.0)
+    s = story_screen('Before reaching the Prime Minister Kieran was intercepted by a government agent', 8.0)
     if not s:
         return
 
-    s = story_screen('The spy was onto him and Jimmy had to act swiftly ...', 6.0)
+    s = story_screen('The agent was onto him and Kieran had to act swiftly ...', 6.0)
     if not s:
         return
     
@@ -507,11 +505,11 @@ def campaign():
         if winner == None:
             return
         
-    s = story_screen('Before the government agent fell unconcious he whispered to Jimmy', 8.0)
+    s = story_screen('The dazed government agent surrendered himself to Kieran and said', 8.0)
     if not s:
         return
 
-    s = story_screen('"Do what I could not a make the world a better place...', 6.0)
+    s = story_screen('"Do what I could not and make the world a better place...', 6.0)
     if not s:
         return
 
@@ -519,11 +517,11 @@ def campaign():
     if not s:
         return
 
-    s = story_screen('Without hesitation Jimmy got on the first LNER train', 6.0)
+    s = story_screen('Without hesitation Kieran got on the first LNER train', 6.0)
     if not s:
         return
 
-    s = story_screen('He was bound for the scottish highlands', 6.0)
+    s = story_screen('He was bound for the a secret army camp hidden in the scottish highlands', 8.0)
     if not s:
         return
 
@@ -537,19 +535,19 @@ def campaign():
         if winner == None:
             return
         
-    s = story_screen("Jimmy took the unconcious Soldier's keycard and uncovered the government's secrets", 8.0)
+    s = story_screen("Kieran took the unconcious Soldier's keycard and downloaded all the government's secrets ", 8.0)
     if not s:
         return
 
-    s = story_screen("Jimmy took the covid19 cure back to Durham and gave it to his gran", 8.0)
+    s = story_screen("The government had found a cure to covid19 but had been keeping it secret", 8.0)
     if not s:
         return
 
-    s = story_screen("He had exposed the government and they had no choice but to resign", 8.0)
+    s = story_screen("The vigilante acted switfly exposing the government and they had no choice but to resign", 8.0)
     if not s:
         return
 
-    s = story_screen("The new administration led by Jeremy Corbyn distributed the cure around the UK", 8.0)
+    s = story_screen("The new administration distributed the cure around the UK, saving Kieran's gran's life in the process", 8.0)
     if not s:
         return
 
