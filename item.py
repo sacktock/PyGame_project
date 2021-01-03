@@ -71,9 +71,13 @@ class Energy_Drink(pygame.sprite.Sprite):
             self.rect.bottom = HEIGHT
 
     def check_player_collision(self, player):
-        if pygame.sprite.collide_rect(self, player):
-            return True
-        else:
+        try:
+            if pygame.sprite.collide_rect(self, player):
+                pygame.mixer.Sound("./assets/sounds/power.wav").play()
+                return True
+            else:
+                return False
+        except:
             return False
         
 

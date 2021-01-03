@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+from pygame.mixer import *
 import os
 import random
 from scene import *
@@ -19,9 +20,9 @@ LIGHT = (196, 196, 196)
 DARK = (80, 80, 80)
 
 # init pygame
-clock = pygame.time.Clock()
-
 pygame.init()
+
+clock = pygame.time.Clock()
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 screen.fill((BLACK))
@@ -32,7 +33,7 @@ font_name = pygame.font.match_font('arial')
 font = pygame.font.Font("assets/fonts/ka1.ttf", 20)
 font_big = pygame.font.Font("assets/fonts/ka1.ttf", 40)
 font_small = pygame.font.Font("assets/fonts/VCR.ttf", 14)
-                
+
 def checkCollision(sprite1, sprite2):
     return pygame.sprite.collide_rect(sprite1, sprite2)
 
@@ -44,12 +45,14 @@ def handle_collision(player1, player2):
             player2.state = 'H'
             player2.direction = 'L'
             player2.damage += 0.05
+            pygame.mixer.Sound("./assets/sounds/hit.wav").play()
         elif player1.state in ['CP', 'JK']:
             if player1.blue_empowered:
                 player2.damage += 0.20
             player2.state = 'KO'
             player2.direction = 'L'
             player2.damage += 0.20
+            pygame.mixer.Sound("./assets/sounds/hit.wav").play()
     elif player1.rect.x > player2.rect.x and player1.direction == 'L' and player2.state not in ['H', 'KO']:
         if player1.state in ['P', 'K']:
             if player1.blue_empowered:
@@ -57,12 +60,14 @@ def handle_collision(player1, player2):
             player2.state = 'H'
             player2.direction = 'R'
             player2.damage += 0.05
+            pygame.mixer.Sound("./assets/sounds/hit.wav").play()
         elif player1.state in ['CP', 'JK']:
             if player1.blue_empowered:
                 player2.damage += 0.20
             player2.state = 'KO'
             player2.direction = 'R'
             player2.damage += 0.20
+            pygame.mixer.Sound("./assets/sounds/hit.wav").play()
     if player2.rect.x < player1.rect.x and player2.direction == 'R' and player1.state not in ['H', 'KO']:
         if player2.state in ['P', 'K']:
             if player2.blue_empowered:
@@ -70,12 +75,14 @@ def handle_collision(player1, player2):
             player1.state = 'H'
             player1.direction = 'L'
             player1.damage += 0.05
+            pygame.mixer.Sound("./assets/sounds/hit.wav").play()
         elif player2.state in ['CP', 'JK']:
             if player2.blue_empowered:
                 player1.damage += 0.20
             player1.state = 'KO'
             player1.direction = 'L'
             player1.damage += 0.20
+            pygame.mixer.Sound("./assets/sounds/hit.wav").play()
     elif player2.rect.x > player1.rect.x and player2.direction == 'L' and player1.state not in ['H', 'KO']:
         if player2.state in ['P', 'K']:
             if player2.blue_empowered:
@@ -83,12 +90,14 @@ def handle_collision(player1, player2):
             player1.state = 'H'
             player1.direction = 'R'
             player1.damage += 0.05
+            pygame.mixer.Sound("./assets/sounds/hit.wav").play()
         elif player2.state in ['CP', 'JK']:
             if player2.blue_empowered:
                 player1.damage += 0.20
             player1.state = 'KO'
             player1.direction = 'R'
             player1.damage += 0.20
+            pygame.mixer.Sound("./assets/sounds/hit.wav").play()
 
 # start screen loop
 def start_screen():
@@ -113,6 +122,8 @@ def start_screen():
 
 # start menu loop
 def start_menu():
+    pygame.mixer.music.load('assets/sounds/menu_music.mp3')
+    pygame.mixer.music.play(-1)
     while True:
         screen.blit(background, (0,0))
         drawText('COVID 19 VIGILANTE', font_big, screen, WIDTH // 2, 40, WHITE)
@@ -139,12 +150,16 @@ def start_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if campaign_button.check():
+                        pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         campaign()
                     elif freeplay_button.check():
+                        pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         character_selection_menu('freeplay')
                     elif sandbox_button.check():
+                        pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         character_selection_menu('sandbox')
                     elif tutorial_button.check():
+                        pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         tutorial()
 
         pygame.display.update()
@@ -175,8 +190,10 @@ def quit_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if continue_button.check():
+                        pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         return True
                     elif main_menu_button.check():
+                        pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         return False
                     elif quit_button.check():
                         pygame.quit()
@@ -228,18 +245,23 @@ def character_selection_menu(game_type):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if vigilante_button.check():
+                        pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         map_selection_menu(game_type, 'Vigilante')
                         return
                     elif renegade_button.check():
+                        pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         map_selection_menu(game_type, 'Renegade')
                         return
                     elif ranger_button.check():
+                        pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         map_selection_menu(game_type, 'Ranger')
                         return
                     elif agent_button.check():
+                        pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         map_selection_menu(game_type, 'Agent')
                         return
                     elif soldier_button.check():
+                        pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         map_selection_menu(game_type, 'Soldier')
                         return
                 
@@ -285,15 +307,19 @@ def map_selection_menu(game_type, character_selection):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if durham_button.check():
+                        pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         game(game_type, character_selection, 'Durham')
                         return
                     elif london_button.check():
+                        pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         game(game_type, character_selection, 'London')
                         return
                     elif downing_button.check():
+                        pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         game(game_type, character_selection, '10 Downing')
                         return
                     elif army_button.check():
+                        pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         game(game_type, character_selection, 'Army Base')
                         return
                         
@@ -322,8 +348,12 @@ def pause_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if resume_button.check():
+                        pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         return True
                     if quit_button.check():
+                        pygame.mixer.Sound("./assets/sounds/button.wav").play()
+                        pygame.mixer.music.load('assets/sounds/menu_music.mp3')
+                        pygame.mixer.music.play(-1)
                         return False
         pygame.display.update()
         clock.tick(FPS)
@@ -331,6 +361,8 @@ def pause_menu():
 def victory_screen(player):
     running = True
     a_frames = 0.0
+    pygame.mixer.music.stop()
+    pygame.mixer.Sound("./assets/sounds/victory.wav").play()
     while running:
         a_frames += 1.0
         
@@ -348,11 +380,17 @@ def victory_screen(player):
                 sys.exit()
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_ESCAPE:
+                    pygame.mixer.music.load('assets/sounds/menu_music.mp3')
+                    pygame.mixer.music.play(-1)
                     return
                 if event.key==pygame.K_RETURN:
+                    pygame.mixer.music.load('assets/sounds/menu_music.mp3')
+                    pygame.mixer.music.play(-1)
                     return
 
         if a_frames > 500:
+            pygame.mixer.music.load('assets/sounds/menu_music.mp3')
+            pygame.mixer.music.play(-1)
             return
 
         pygame.display.update()
@@ -361,6 +399,8 @@ def victory_screen(player):
 def defeat_screen(player):
     running = True
     a_frames = 0.0
+    pygame.mixer.music.stop()
+    pygame.mixer.Sound("./assets/sounds/defeat.wav").play()
     while running:
         a_frames += 1.0
         
@@ -378,11 +418,17 @@ def defeat_screen(player):
                 sys.exit()
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_ESCAPE:
+                    pygame.mixer.music.load('assets/sounds/menu_music.mp3')
+                    pygame.mixer.music.play(-1)
                     return
                 if event.key==pygame.K_RETURN:
+                    pygame.mixer.music.load('assets/sounds/menu_music.mp3')
+                    pygame.mixer.music.play(-1)
                     return
 
         if a_frames > 500:
+            pygame.mixer.music.load('assets/sounds/menu_music.mp3')
+            pygame.mixer.music.play(-1)
             return
 
         pygame.display.update()
@@ -561,6 +607,10 @@ def campaign():
 
 def tutorial():
     running = True
+    
+    pygame.mixer.music.load('assets/sounds/game_music.mp3')
+    pygame.mixer.music.play(-1)
+    
     scene = Scene('Durham')
     bg = pygame.image.load(os.path.join('', scene.bg_path)).convert()
     all_sprites = pygame.sprite.Group()
@@ -616,6 +666,10 @@ def tutorial():
 # game loop
 def game(game_type, character_selection, map_selection):
     running = True
+    
+    pygame.mixer.music.load('assets/sounds/game_music.mp3')
+    pygame.mixer.music.play(-1)
+    
     scene = Scene(map_selection)
     bg = pygame.image.load(os.path.join('', scene.bg_path)).convert()
     i_bar = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/GUI/bar.png')).convert_alpha(), (156, 40))
@@ -663,7 +717,7 @@ def game(game_type, character_selection, map_selection):
                 sys.exit()
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_RETURN:
-                    if game_type in ['sandbox', 'tutorial']:
+                    if game_type == 'sandbox':
                         player.lives = 3
                         player.reset()
                 if event.key==pygame.K_ESCAPE:

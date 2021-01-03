@@ -23,3 +23,5 @@
 - https://ackrmnn.itch.io/energy-cans
 **GUI for health bar**
 - https://wishforge.itch.io/gdevelop-healthbar-example
+**music and sound FX**
+- https://mixkit.co/free-sound-effects/

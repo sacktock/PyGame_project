@@ -55,6 +55,7 @@ class CPU_Player(pygame.sprite.Sprite):
             self.a_frames = 0
 
     def make_jump(self):
+        pygame.mixer.Sound("./assets/sounds/jump.wav").play()
         self.isjump = True
         self.j_frames = 0
         
@@ -225,6 +226,7 @@ class CPU_Player(pygame.sprite.Sprite):
         except IndexError:
             # if you fall off the map you die
             if self.state != 'D':
+                pygame.mixer.Sound("./assets/sounds/death.wav").play()
                 self.state = 'D'
                 self.lives = self.lives - 1
                 self.a_frames = 0
@@ -285,6 +287,7 @@ class Ranger_CPU(CPU_Player):
             if abs(player.rect.y - self.rect.y) < 24:   
                 if abs(player.rect.x - self.rect.x) < 10:
                     self.update_state(random.choice(action_space))
+                    pygame.mixer.Sound("./assets/sounds/punch.wav").play()
                 elif player.rect.x < 600 and player.rect.x > 168:
                     if abs(player.rect.x - self.rect.x) < 50:
                         self.update_state('R')
@@ -363,6 +366,7 @@ class Soldier_CPU(CPU_Player):
             if abs(player.rect.y - self.rect.y) < 24:   
                 if abs(player.rect.x - self.rect.x) < 10:
                     self.update_state(random.choice(action_space))
+                    pygame.mixer.Sound("./assets/sounds/punch.wav").play()
                 elif player.rect.x < 696 and player.rect.x > 96:
                     if abs(player.rect.x - self.rect.x) < 50:
                         self.update_state('R')
@@ -395,6 +399,7 @@ class Soldier_CPU(CPU_Player):
                 self.speedy += 1
                 if self.speedy == 0:
                     self.update_state('JK')
+                    pygame.mixer.Sound("./assets/sounds/punch.wav").play()
 
     def make_jump(self):
         super().make_jump()
@@ -598,6 +603,7 @@ class Renegade_CPU(CPU_Player):
                 
                 if abs(player.rect.x - self.rect.x) < 10:
                     self.update_state(random.choice(action_space))
+                    pygame.mixer.Sound("./assets/sounds/punch.wav").play()
                 elif player.rect.x < 576 and player.rect.x > 240:
                     if abs(player.rect.x - self.rect.x) < 50:
                         self.update_state('R')
@@ -673,6 +679,7 @@ class Agent_CPU(CPU_Player):
             if abs(player.rect.y - self.rect.y) < 24:   
                 if abs(player.rect.x - self.rect.x) < 10:
                     self.update_state(random.choice(action_space))
+                    pygame.mixer.Sound("./assets/sounds/punch.wav").play()
                 elif player.rect.x < 720 and player.rect.x > 72:
                     if abs(player.rect.x - self.rect.x) < 50:
                         self.update_state('R')
@@ -705,6 +712,7 @@ class Agent_CPU(CPU_Player):
                 self.speedy += 1
                 if self.speedy == 0:
                     self.update_state('JK')
+                    pygame.mixer.Sound("./assets/sounds/punch.wav").play()
 
     def make_jump(self):
         super().make_jump()
@@ -903,6 +911,7 @@ class Player(pygame.sprite.Sprite):
         # handle player jumping            
         if self.isjump == False:
             if keystate[pygame.K_w]:
+                pygame.mixer.Sound("./assets/sounds/jump.wav").play()
                 self.j_frames = 0
                 self.isjump = True
         else:
@@ -930,16 +939,21 @@ class Player(pygame.sprite.Sprite):
                     self.update_state('JK')
                     self.a_frames = 0
                     self.isdoublejump = True
+                    pygame.mixer.Sound("./assets/sounds/punch.wav").play()
                 elif mousestate == (1,0,0):
                     self.update_state('CP')
                     self.a_frames = 0
+                    pygame.mixer.Sound("./assets/sounds/punch.wav").play()
             else:   
                 if mousestate == (0,0,1):
                     self.update_state('K')
                     self.a_frames = 0
+                    pygame.mixer.Sound("./assets/sounds/punch.wav").play()
                 elif mousestate == (1,0,0):
                     self.update_state('P')
                     self.a_frames = 0
+                    pygame.mixer.Sound("./assets/sounds/punch.wav").play()
+            
                     
     def update(self):
         pos_x = self.rect.x
@@ -1116,6 +1130,7 @@ class Player(pygame.sprite.Sprite):
         except IndexError:
             # if you fall off the map you die
             if self.state != 'D':
+                pygame.mixer.Sound("./assets/sounds/death.wav").play()
                 self.state = 'D'
                 self.lives = self.lives - 1
                 self.a_frames = 0
