@@ -24,34 +24,41 @@ pygame.init()
 
 clock = pygame.time.Clock()
 
+# init screen
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 screen.fill((BLACK))
 
+# init background
 background = pygame.image.load(os.path.join('', 'assets/background/background.jpg')).convert()
 
+# init font
 font_name = pygame.font.match_font('arial')
 font = pygame.font.Font("assets/fonts/ka1.ttf", 20)
 font_big = pygame.font.Font("assets/fonts/ka1.ttf", 40)
 font_small = pygame.font.Font("assets/fonts/VCR.ttf", 14)
 
+# FUNCTIONS
+
+# check collision between two sprites
 def checkCollision(sprite1, sprite2):
     return pygame.sprite.collide_rect(sprite1, sprite2)
 
+# handle collision between two players and handle successful attacks
 def handle_collision(player1, player2):
     if player1.rect.x < player2.rect.x and player1.direction == 'R' and player2.state not in ['H', 'KO']:
-        if player1.state in ['P', 'K']:
-            if player1.blue_empowered:
+        if player1.state in ['P', 'K']: # if punching or kicking
+            if player1.blue_empowered: # if blue empowered increase damage by 0.2
                 player2.damage += 0.20
             player2.state = 'H'
             player2.direction = 'L'
-            player2.damage += 0.05
-            pygame.mixer.Sound("./assets/sounds/hit.wav").play()
-        elif player1.state in ['CP', 'JK']:
+            player2.damage += 0.05 # basic punch and kick does 0.05 damage
+            pygame.mixer.Sound("./assets/sounds/hit.wav").play() # play sound FX
+        elif player1.state in ['CP', 'JK']: # if combo punching or kicking
             if player1.blue_empowered:
                 player2.damage += 0.20
             player2.state = 'KO'
             player2.direction = 'L'
-            player2.damage += 0.20
+            player2.damage += 0.20 # combo punch and jump kick do 0.2 damage
             pygame.mixer.Sound("./assets/sounds/hit.wav").play()
     elif player1.rect.x > player2.rect.x and player1.direction == 'L' and player2.state not in ['H', 'KO']:
         if player1.state in ['P', 'K']:
@@ -123,18 +130,21 @@ def start_screen():
 # start menu loop
 def start_menu():
     pygame.mixer.music.load('assets/sounds/menu_music.mp3')
-    pygame.mixer.music.play(-1)
+    pygame.mixer.music.play(-1) # play menu music 
     while True:
-        screen.blit(background, (0,0))
+        screen.blit(background, (0,0)) # draw background
         drawText('COVID 19 VIGILANTE', font_big, screen, WIDTH // 2, 40, WHITE)
 
+        # get mouse pos for button click
         mx, my = pygame.mouse.get_pos()
 
+        # init buttons
         campaign_button = Button(WIDTH // 2 - 125, HEIGHT // 2 - 90,250,50,BLACK,LIGHT,'Campaign')
         freeplay_button = Button(WIDTH // 2 - 125, HEIGHT // 2 - 30,250,50,BLACK,LIGHT,'Free Play')
         sandbox_button = Button(WIDTH // 2 - 125, HEIGHT // 2 + 30,250,50,BLACK,LIGHT,'Sandbox')
         tutorial_button = Button(WIDTH // 2 - 125, HEIGHT // 2 + 90,250,50,BLACK,LIGHT,'Tutorial')
 
+        # draw buttons
         campaign_button.draw(screen, font)
         freeplay_button.draw(screen, font)
         sandbox_button.draw(screen, font)
@@ -148,6 +158,7 @@ def start_menu():
                 if event.key==pygame.K_ESCAPE:
                     quit_menu()
             if event.type == pygame.MOUSEBUTTONDOWN:
+                # handle button press
                 if event.button == 1:
                     if campaign_button.check():
                         pygame.mixer.Sound("./assets/sounds/button.wav").play()
@@ -191,10 +202,10 @@ def quit_menu():
                 if event.button == 1:
                     if continue_button.check():
                         pygame.mixer.Sound("./assets/sounds/button.wav").play()
-                        return True
+                        return True # return True to continue
                     elif main_menu_button.check():
                         pygame.mixer.Sound("./assets/sounds/button.wav").play()
-                        return False
+                        return False # return False to quit
                     elif quit_button.check():
                         pygame.quit()
                         sys.exit()
@@ -203,7 +214,8 @@ def quit_menu():
         
 def character_selection_menu(game_type):
     running = True
-    
+
+    # get character portraits to display
     vigilante_image = pygame.image.load(os.path.join('', 'assets/vigilante/Vigilante_TitleScreen.png')).convert()
     renegade_image = pygame.image.load(os.path.join('', 'assets/renegade/Renegade_TitleScreen.png')).convert()
     ranger_image = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/ranger/NES_Ranger_TitleScreen.png')).convert(), (88, 136))
@@ -228,6 +240,7 @@ def character_selection_menu(game_type):
         agent_button.draw(screen, font_small)
         soldier_button.draw(screen, font_small)
 
+        # draw character portraits above buttons
         screen.blit(vigilante_image, (WIDTH // 2 - 164, HEIGHT // 2 - 137))
         screen.blit(renegade_image, (WIDTH // 2 - 44, HEIGHT // 2 - 137))
         screen.blit(ranger_image, (WIDTH // 2 + 76, HEIGHT // 2 - 137))
@@ -270,6 +283,8 @@ def character_selection_menu(game_type):
         
 def map_selection_menu(game_type, character_selection):
     running = True
+
+    # get map backgrounds and resize to display
     durham_image = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/background/durham.jpg')).convert(), (200, 112))
     london_image = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/background/london.jpg')).convert(), (200, 112))
     downing_image = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/background/10_downing.jpg')).convert(), (200, 112))
@@ -291,6 +306,7 @@ def map_selection_menu(game_type, character_selection):
         downing_button.draw(screen, font_small)
         army_button.draw(screen, font_small)
 
+        # draw map background above buttons
         screen.blit(durham_image, (WIDTH // 2 - 220, HEIGHT // 2 - 113))
         screen.blit(london_image, (WIDTH // 2 + 20, HEIGHT // 2 - 113))
         screen.blit(downing_image, (WIDTH // 2 - 220, HEIGHT // 2 + 62))
@@ -351,6 +367,7 @@ def pause_menu():
                         pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         return True
                     if quit_button.check():
+                        # change background music
                         pygame.mixer.Sound("./assets/sounds/button.wav").play()
                         pygame.mixer.music.load('assets/sounds/menu_music.mp3')
                         pygame.mixer.music.play(-1)
@@ -358,16 +375,17 @@ def pause_menu():
         pygame.display.update()
         clock.tick(FPS)
 
+# display on victory
 def victory_screen(player):
     running = True
-    a_frames = 0.0
+    a_frames = 0.0 # animation frames
     pygame.mixer.music.stop()
-    pygame.mixer.Sound("./assets/sounds/victory.wav").play()
+    pygame.mixer.Sound("./assets/sounds/victory.wav").play() # play victory sound
     while running:
-        a_frames += 1.0
+        a_frames += 1.0 # increment animation frames for text fade in
         
         if a_frames < 255:
-            r_col = int(227 * (a_frames / 255))
+            r_col = int(227 * (a_frames / 255)) # set the colour of the text
             g_col = int(216 * (a_frames / 255))
             b_col = 0
             
@@ -380,6 +398,7 @@ def victory_screen(player):
                 sys.exit()
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_ESCAPE:
+                    # change the background music
                     pygame.mixer.music.load('assets/sounds/menu_music.mp3')
                     pygame.mixer.music.play(-1)
                     return
@@ -396,11 +415,12 @@ def victory_screen(player):
         pygame.display.update()
         clock.tick(FPS)
 
+# display on defeat
 def defeat_screen(player):
     running = True
     a_frames = 0.0
     pygame.mixer.music.stop()
-    pygame.mixer.Sound("./assets/sounds/defeat.wav").play()
+    pygame.mixer.Sound("./assets/sounds/defeat.wav").play() # play defeat sound
     while running:
         a_frames += 1.0
         
@@ -434,11 +454,12 @@ def defeat_screen(player):
         pygame.display.update()
         clock.tick(FPS)
 
+# write text to the screen that fades in to present part of the campaign story
 def story_screen(text, seconds):
     running = True
-    a_frames = 0
+    a_frames = 0 # animation frames
     while running:
-        a_frames += 1
+        a_frames += 1 # increment animation frames for text fade in
         
         if a_frames < 255:
             col = (a_frames, a_frames, a_frames)
@@ -456,7 +477,7 @@ def story_screen(text, seconds):
                     return True
                 if event.key==pygame.K_ESCAPE:
                     if not quit_menu():
-                        return False
+                        return False # if false quit to main menu
                 
         if a_frames > (seconds * FPS):
             return True
@@ -464,9 +485,11 @@ def story_screen(text, seconds):
         pygame.display.update()
         clock.tick(FPS)
 
+# campaign function
 def campaign():
+    # present story as text to the screen
     s = story_screen('COVID 19 VIGILANTE 2020 campaign', 6.0)
-    if not s:
+    if not s: # if false then rturn to main menu
         return
 
     s = story_screen('Before the covid19 pandemic Kieran Smith was just an ordindary local lad', 8.0)
@@ -494,9 +517,9 @@ def campaign():
         return
 
     winner = False
-    while winner == False:
-        winner = game('campaign', 'Vigilante', 'Durham')
-        if winner == None:
+    while winner == False: # repeat until victory
+        winner = game('campaign', 'Vigilante', 'Durham') # set up first level
+        if winner == None: # if quit then return to main menu
             return
         
     s = story_screen('After fighting countless anti-maskers on the streets of Durham a rumour surfaced', 8.0)
@@ -525,7 +548,7 @@ def campaign():
     
     winner = False
     while winner == False:
-        winner = game('campaign', 'Vigilante', 'London')
+        winner = game('campaign', 'Vigilante', 'London') # set up second level
         if winner == None:
             return
         
@@ -547,7 +570,7 @@ def campaign():
     
     winner = False
     while winner == False:
-        winner = game('campaign', 'Vigilante', '10 Downing')
+        winner = game('campaign', 'Vigilante', '10 Downing') # set up third level
         if winner == None:
             return
         
@@ -577,7 +600,7 @@ def campaign():
     
     winner = False
     while winner == False:
-        winner = game('campaign', 'Vigilante', 'Army Base')
+        winner = game('campaign', 'Vigilante', 'Army Base') # set up fourth level
         if winner == None:
             return
         
@@ -605,14 +628,19 @@ def campaign():
     if not s:
         return
 
+# set up thee tutorial
 def tutorial():
     running = True
-    
+
+    # change the music to game music
     pygame.mixer.music.load('assets/sounds/game_music.mp3')
     pygame.mixer.music.play(-1)
-    
+
+    # load the Durham game scene
     scene = Scene('Durham')
     bg = pygame.image.load(os.path.join('', scene.bg_path)).convert()
+
+    # init player
     all_sprites = pygame.sprite.Group()
     player = Vigilante_Player(scene)
     all_sprites.add(player)
@@ -625,19 +653,24 @@ def tutorial():
                 sys.exit()
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_RETURN:
+                    # manual respawn
                     player.reset()
                 if event.key==pygame.K_ESCAPE:
+                    # open the pause menu
                     if not pause_menu():
                         return
-        
+
+        # update player sprite by handling game controls
         all_sprites.update()
+        # draw the map background
         screen.blit(bg, (0,0))
         
-        
+        # draw the sprites to the screen
         all_sprites.draw(screen)
+        # draw the game scene
         scene.draw(screen)
         
-
+        # draw instructions to the screen
         if player.state == "D":
             drawText('Press ENTER to respawn', font_big, screen, WIDTH // 2, 50, DARK)
         else:
@@ -666,17 +699,23 @@ def tutorial():
 # game loop
 def game(game_type, character_selection, map_selection):
     running = True
-    
+
+    # change the music to game music
     pygame.mixer.music.load('assets/sounds/game_music.mp3')
     pygame.mixer.music.play(-1)
-    
+
+    # init the game scene
     scene = Scene(map_selection)
     bg = pygame.image.load(os.path.join('', scene.bg_path)).convert()
+
+    # get GUI assets
     i_bar = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/GUI/bar.png')).convert_alpha(), (156, 40))
     i_life = pygame.transform.scale(pygame.image.load(os.path.join('', 'assets/GUI/life.png')).convert_alpha(), (20, 20))
 
+    # init energy drink spawning timer
     pygame.time.set_timer(USEREVENT+1, 15000)
-    
+
+    # init player
     all_sprites = pygame.sprite.Group()
     player = None
     cpu_player =  None
@@ -695,8 +734,10 @@ def game(game_type, character_selection, map_selection):
         return
 
     all_sprites.add(player)
-                
-    if game_type in ['freeplay', 'campaign']:    
+    
+    # set cpu player based on map selection
+    # only need a cpu if campaign or freeplay game
+    if game_type in ['freeplay', 'campaign']: 
         if map_selection == 'Durham':
             cpu_player = Renegade_CPU(scene)
         elif map_selection == 'London':
@@ -710,6 +751,7 @@ def game(game_type, character_selection, map_selection):
              
         all_sprites.add(cpu_player)
 
+    # main game loop
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -717,13 +759,16 @@ def game(game_type, character_selection, map_selection):
                 sys.exit()
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_RETURN:
+                    # handle manual repsawn in sandbox mode
                     if game_type == 'sandbox':
                         player.lives = 3
                         player.reset()
                 if event.key==pygame.K_ESCAPE:
+                    # open pause menu
                     if not pause_menu():
                         return None
-            if event.type == USEREVENT+1:
+            if event.type == USEREVENT+1: # on clock trigger
+                # spawn a random energy drink into the game scene
                 random_drink = random.randint(1, 3)
                 if random_drink == 1:     
                    item = Blue_Energy(scene, player, cpu_player)
@@ -734,34 +779,40 @@ def game(game_type, character_selection, map_selection):
                 else:
                    item = Yellow_Energy(scene, player, cpu_player)
                    all_sprites.add(item)
-                   
+
+        # if cpu player
         if game_type in ['freeplay', 'campaign']:
-            cpu_player.make_action(player)
-            if checkCollision(player, cpu_player):
+            cpu_player.make_action(player) # call CPU behaviour to make an action
+            if checkCollision(player, cpu_player): # handle player and cpu collision   
                 handle_collision(player, cpu_player)
 
+        # update sprites and handle user input
         all_sprites.update()
+        # draw the map background
         screen.blit(bg, (0,0))
-        
+
+        # draw sprites to the screen
         all_sprites.draw(screen)
+        # draw the game scene
         scene.draw(screen)
 
+        # if cpu player
         if game_type in ['freeplay', 'campaign']:
-            drawText(player.name, font, screen, 90, 25, BLACK)
+            drawText(player.name, font, screen, 90, 25, BLACK) # draw player name
             for x in range(player.lives):
-                screen.blit(i_life, (20 + x*20, 85))
-            screen.blit(i_bar, (90 - 78, 61 - 20))
+                screen.blit(i_life, (20 + x*20, 85)) # draw player lives
+            screen.blit(i_bar, (90 - 78, 61 - 20)) # draw GUI asset
             
-            drawText('DMG : '+ str(int(player.damage*100)), font, screen, 90, 61, DARK)
+            drawText('DMG : '+ str(int(player.damage*100)), font, screen, 90, 61, DARK) # draw player damage
             
-            drawText('CPU', font, screen, 702, 25, BLACK)
+            drawText('CPU', font, screen, 702, 25, BLACK) # draw cpu label
             for x in range(cpu_player.lives):
-                screen.blit(i_life, (632 + x*20, 85))
-            screen.blit(i_bar, (702 - 78, 61 - 20))
-            drawText('DMG : '+ str(int(cpu_player.damage*100)), font, screen, 702, 61, DARK)
-        else:
-            if player.state == "D" and player.lives < 1:
-                drawText('Press ENTER to respawn', font_big, screen, WIDTH // 2, 50, BLACK)
+                screen.blit(i_life, (632 + x*20, 85)) # draw cpu lives
+            screen.blit(i_bar, (702 - 78, 61 - 20)) # draw GUI asset
+            drawText('DMG : '+ str(int(cpu_player.damage*100)), font, screen, 702, 61, DARK) # draw cpu damage
+        else: # in sandbox mode
+            if player.state == "D" and player.lives < 1: # if player is dead
+                drawText('Press ENTER to respawn', font_big, screen, WIDTH // 2, 50, BLACK) # draw instructions
             else:
                 drawText(player.name, font, screen, 90, 25, BLACK)
                 for x in range(player.lives):
@@ -773,16 +824,21 @@ def game(game_type, character_selection, map_selection):
         pygame.display.flip()
         pygame.display.update()
         clock.tick(FPS)
-        
+
+        # if freeplay or campaign game
         if game_type in ['freeplay', 'campaign']:
-            if player.lives == 0:
-                defeat_screen(cpu_player)
+            if player.lives == 0: # if player has no lives left
+                defeat_screen(cpu_player) # display defeat screen
                 return False
-            elif cpu_player.lives == 0:
-                victory_screen(player)
+            elif cpu_player.lives == 0: # if cpu has no lives left
+                victory_screen(player) # display victory screen
                 return True
-                
+
+# MAIN CODE
+
+# display start screen    
 start_screen()
+# display main menu
 start_menu()
 
 pygame.quit()

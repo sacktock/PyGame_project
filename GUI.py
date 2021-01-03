@@ -2,7 +2,10 @@ import pygame
 from pygame.locals import *
 import os
 import random
-    
+
+# OBJECTS
+
+# button class  
 class Button(object):
     def __init__(self,x,y,width,height,text_color,background_color,text):
         self.rect=pygame.Rect(x,y,width,height)
@@ -16,12 +19,16 @@ class Button(object):
         self.angle=0
 
     def check(self):
+        # check mouse is hovering the button
         return self.rect.collidepoint(pygame.mouse.get_pos())
 
     def draw(self, screen, font):
+        # draw the button object
         pygame.draw.rect(screen, self.background_color,(self.rect),0)
         drawTextcenter(self.text,font,screen,self.x+self.width/2,self.y+self.height/2,self.text_color)  
         pygame.draw.rect(screen,self.text_color,self.rect,3)
+
+# FUNCTIONS
 
 def drawTextcenter(text,font,screen,x,y,color):
     textobj=font.render(text,True,color)
