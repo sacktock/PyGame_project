@@ -50,6 +50,7 @@ def handle_collision(player1, player2):
             if player1.blue_empowered: # if blue empowered increase damage by 0.2
                 player2.damage += 0.20
             player2.state = 'H'
+            player2.a_frames = 0 # reset animation frames
             player2.direction = 'L'
             player2.damage += 0.05 # basic punch and kick does 0.05 damage
             pygame.mixer.Sound("./assets/sounds/hit.wav").play() # play sound FX
@@ -57,6 +58,7 @@ def handle_collision(player1, player2):
             if player1.blue_empowered:
                 player2.damage += 0.20
             player2.state = 'KO'
+            player2.a_frames = 0
             player2.direction = 'L'
             player2.damage += 0.20 # combo punch and jump kick do 0.2 damage
             pygame.mixer.Sound("./assets/sounds/hit.wav").play()
@@ -65,6 +67,7 @@ def handle_collision(player1, player2):
             if player1.blue_empowered:
                 player2.damage += 0.20
             player2.state = 'H'
+            player2.a_frames = 0
             player2.direction = 'R'
             player2.damage += 0.05
             pygame.mixer.Sound("./assets/sounds/hit.wav").play()
@@ -72,6 +75,7 @@ def handle_collision(player1, player2):
             if player1.blue_empowered:
                 player2.damage += 0.20
             player2.state = 'KO'
+            player2.a_frames = 0
             player2.direction = 'R'
             player2.damage += 0.20
             pygame.mixer.Sound("./assets/sounds/hit.wav").play()
@@ -80,6 +84,7 @@ def handle_collision(player1, player2):
             if player2.blue_empowered:
                 player1.damage += 0.20
             player1.state = 'H'
+            player1.a_frames = 0
             player1.direction = 'L'
             player1.damage += 0.05
             pygame.mixer.Sound("./assets/sounds/hit.wav").play()
@@ -87,6 +92,7 @@ def handle_collision(player1, player2):
             if player2.blue_empowered:
                 player1.damage += 0.20
             player1.state = 'KO'
+            player1.a_frames = 0
             player1.direction = 'L'
             player1.damage += 0.20
             pygame.mixer.Sound("./assets/sounds/hit.wav").play()
@@ -95,6 +101,7 @@ def handle_collision(player1, player2):
             if player2.blue_empowered:
                 player1.damage += 0.20
             player1.state = 'H'
+            player1.a_frames = 0
             player1.direction = 'R'
             player1.damage += 0.05
             pygame.mixer.Sound("./assets/sounds/hit.wav").play()
@@ -102,6 +109,7 @@ def handle_collision(player1, player2):
             if player2.blue_empowered:
                 player1.damage += 0.20
             player1.state = 'KO'
+            player1.a_frames = 0
             player1.direction = 'R'
             player1.damage += 0.20
             pygame.mixer.Sound("./assets/sounds/hit.wav").play()
