@@ -1,6 +1,6 @@
 # COVID 19 VIGILANTE 2020
 - basic platform fighter / arena game implemented with pygame
-- written with python 3.8.6 => should be backwards compatible (for the most part)
+- written with python 3.8.6 on Windows 10 => should be backwards compatible (for the most part)
 
 # Modules required
 - pygame 1.9.6
