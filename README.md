@@ -22,9 +22,13 @@
 # Resources used
 **Terrain and character sprite sheets**
 - https://chasersgaming.itch.io/
+
 **Energy drink sprites**
 - https://ackrmnn.itch.io/energy-cans
+
 **GUI for health bar**
 - https://wishforge.itch.io/gdevelop-healthbar-example
-**music and sound FX**
+
+**Music and sound FX**
 - https://mixkit.co/free-sound-effects/
+
