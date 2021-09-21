@@ -2,13 +2,13 @@
 - basic platform fighter / arena game implemented with pygame
 - written with python 3.8.6 on Windows 10 => should be backwards compatible (for the most part)
 
-# Modules required
+## Modules required
 - pygame 1.9.6
 - os
 - random
 - sys
 
-# How to run
+## How to run
 **Option 1**
 - Open main.py into python IDLE, press F5 to run main.py
 
@@ -16,10 +16,10 @@
 - Open a terminal in this directory
 - Run: python main.py
 
-# Screenshots
+## Screenshots
 ![Image](./images/screenshot.png)
 
-# Resources used
+## Resources used
 **Terrain and character sprite sheets**
 - https://chasersgaming.itch.io/
 
