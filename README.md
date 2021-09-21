@@ -16,6 +16,9 @@
 - Open a terminal in this directory
 - Run: python main.py
 
+# Screenshots
+![Image](./images/screenshot.png)
+
 # Resources used
 **Terrain and character sprite sheets**
 - https://chasersgaming.itch.io/
